@@ -1,2 +1,2 @@
-# COMP2019
-Projeto da disciplina de Compiladores 2018/2019
+# comp2019
+Projeto Compiladores 2018/2019
