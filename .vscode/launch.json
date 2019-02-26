@@ -9,7 +9,10 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/.bin/main.o",
-            "args": [],
+            "args": [
+                "<",
+                "examples/factorial.dgo"
+            ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
