@@ -4,7 +4,7 @@ id          {letter}({letter}|{digit}|"_")*
 int1        {digit}+
 int2        ("0x"|"0X")(digit|[a-f]|[A-F])+
 int_lit     {int1}|{int2}
-decimal     {int1}"."{int1}
+decimal     ({int1}"."{int1}?)|("."{int1})
 exponent    (e|E)("+"|"-")?({decimal}|{int1})
 real_lit    ({decimal}{exponent}?)|({int1}{exponent})
 escape_char \\[fnrt\\\"]
