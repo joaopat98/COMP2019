@@ -13,7 +13,7 @@
         RSQ,
         RBRACE
     } token;
-
+    bool print = false;
     int line = 1, col = 1;
     void ucol(){
         col += yyleng;
@@ -40,12 +40,13 @@
     }
 %}
 %X str seq comment multi_comment
-letter      [a-z]|[A-Z]
+whitespace  " "|\t|\r
+letter      [a-z]|[A-Z]|_
 digit       [0-9]
-id          {letter}({letter}|{digit}|"_")*
+id          {letter}({letter}|{digit})*
+int2        ("0x"|"0X")({digit}|[a-f]|[A-F])+
 int1        {digit}+
-int2        ("0x"|"0X")(digit|[a-f]|[A-F])+
-int_lit     {int1}|{int2}
+int_lit     {int2}|{int1}
 decimal     ({int1}"."{int1}?)|("."{int1})
 exponent    (e|E)("+"|"-")?({decimal}|{int1})
 real_lit    ({decimal}{exponent}?)|({int1}{exponent})
@@ -92,114 +93,195 @@ print       "fmt.Println"
 parse_int   "strconv.Atoi"
 func        "func"
 cmdargs     "os.Args"
+reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthrough"|"go"|"goto"|"import"|"interface"|"map"|"range"|"select"|"struct"|"switch"|"type"|"++"|"--"
 %%
+{string}   {
+    if (print) printf("STRING\n");
+    rlast();
+    ucol();
+}
+{bool}   {
+    if (print) printf("BOOL\n");
+    rlast();
+    ucol();
+}
+{float32}   {
+    if (print) printf("FLOAT32\n");
+    rlast();
+    ucol();
+}
+{or}   {
+    if (print) printf("OR\n");
+    rlast();
+    ucol();
+}
+{not}   {
+    if (print) printf("NOT\n");
+    rlast();
+    ucol();
+}
+{ne}   {
+    if (print) printf("NE\n");
+    rlast();
+    ucol();
+}
+{mod}   {
+    if (print) printf("MOD\n");
+    rlast();
+    ucol();
+}
+{le}   {
+    if (print) printf("LE\n");
+    rlast();
+    ucol();
+}
+{lt}   {
+    if (print) printf("LT\n");
+    rlast();
+    ucol();
+}
+{ge}   {
+    if (print) printf("GE\n");
+    rlast();
+    ucol();
+}
+{gt}   {
+    if (print) printf("GT\n");
+    rlast();
+    ucol();
+}
+{div}   {
+    if (print) printf("DIV\n");
+    rlast();
+    ucol();
+}
+{and}   {
+    if (print) printf("AND\n");
+    rlast();
+    ucol();
+}
 {package}   {
-    printf("PACKAGE\n");
+    if (print) printf("PACKAGE\n");
     rlast();
     ucol();
 }
 {func}   {
-    printf("FUNC\n");
+    if (print) printf("FUNC\n");
     rlast();
     ucol();
 }
 {l_par}   {
-    printf("LPAR\n");
+    if (print) printf("LPAR\n");
     rlast();
     ucol();
 }
 {r_par}   {
-    printf("RPAR\n");
+    if (print) printf("RPAR\n");
     slast(RPAR);
     ucol();
 }
 {int}   {
-    printf("INT\n");
+    if (print) printf("INT\n");
     rlast();
     ucol();
 }
 {l_brace}   {
-    printf("LBRACE\n");
+    if (print) printf("LBRACE\n");
     rlast();
     ucol();
 }
 {r_brace}   {
-    printf("RBRACE\n");
+    if (print) printf("RBRACE\n");
     slast(RBRACE);
     ucol();
 }
 {if}   {
-    printf("IF\n");
+    if (print) printf("IF\n");
     rlast();
     ucol();
 }
 {eq}   {
-    printf("EQ\n");
+    if (print) printf("EQ\n");
+    rlast();
+    ucol();
+}
+{for}   {
+    if (print) printf("FOR\n");
+    rlast();
+    ucol();
+}
+{plus}  {
+    if (print) printf("PLUS\n");
     rlast();
     ucol();
 }
 {return}   {
-    printf("RETURN\n");
+    if (print) printf("RETURN\n");
     slast(RETURN);
     ucol();
 }
 {semicolon}   {
-    printf("SEMICOLON\n");
+    if (print) printf("SEMICOLON\n");
     rlast();
     ucol();
 }
 {star}   {
-    printf("STAR\n");
+    if (print) printf("STAR\n");
     rlast();
     ucol();
 }
 {minus} {
-    printf("MINUS\n");
+    if (print) printf("MINUS\n");
     rlast();
     ucol();
 }
 {blank_id}  {
-    printf("BLANKID\n");
+    if (print) printf("BLANKID\n");
     rlast();
     ucol();
 }
 {assign}  {
-    printf("ASSIGN\n");
+    if (print) printf("ASSIGN\n");
     rlast();
     ucol();
 }
 {lsq}  {
-    printf("LSQ\n");
+    if (print) printf("LSQ\n");
     rlast();
     ucol();
 }
 {rsq}  {
-    printf("RSQ\n");
+    if (print) printf("RSQ\n");
     slast(RSQ);
     ucol();
 }
 {var}   {
-    printf("VAR\n");
+    if (print) printf("VAR\n");
     rlast();
     ucol();
 }
 {comma}   {
-    printf("COMMA\n");
+    if (print) printf("COMMA\n");
     rlast();
     ucol();
 }
 {parse_int}   {
-    printf("PARSEINT\n");
+    if (print) printf("PARSEINT\n");
     rlast();
     ucol();
 }
 {cmdargs}   {
-    printf("CMDARGS\n");
+    if (print) printf("CMDARGS\n");
     rlast();
     ucol();
 }
 {print}   {
-    printf("PRINT\n");
+    if (print) printf("PRINT\n");
+    rlast();
+    ucol();
+}
+{reserved}  {
+    if (print) printf("RESERVED(%s)\n", yytext);
     rlast();
     ucol();
 }
@@ -231,7 +313,7 @@ cmdargs     "os.Args"
 }
 <str>{str_delim}    {
     if (!error){
-        printf("STRLIT(\"%s\")\n",buf);
+        if (print) printf("STRLIT(\"%s\")\n",buf);
         slast(STRLIT);
     }
     error = false;
@@ -248,20 +330,21 @@ cmdargs     "os.Args"
 
 
 {int_lit}   {
-    printf("INTLIT(%s)\n", yytext);
+    if (print) printf("INTLIT(%s)\n", yytext);
     slast(INTLIT);
     ucol();
 }
 {real_lit}   {
-    printf("REALLIT(%s)\n", yytext);
+    if (print) printf("REALLIT(%s)\n", yytext);
     slast(REALLIT);
     ucol();
 }
 {id}    {
-    printf("ID(%s)\n", yytext);
+    if (print) printf("ID(%s)\n", yytext);
     slast(ID);
     ucol();
 }
+
 "//"  {
     ucol();
     BEGIN comment;
@@ -276,6 +359,10 @@ cmdargs     "os.Args"
     ucol();
 }
 <comment>\n {
+    if(last_token != OTHER){
+        if (print) printf("SEMICOLON\n");
+        rlast();
+    }
     uline();
     BEGIN 0;
 }
@@ -293,21 +380,38 @@ cmdargs     "os.Args"
     ucol();
     BEGIN 0;
 }
-
-
-.    {
+{whitespace} {
     ucol();
 }
+
+<<EOF>> {
+    if(last_token != OTHER){
+        if (print) printf("SEMICOLON\n");
+        rlast();
+    }
+    uline();
+    return 0;
+}
+
+.    {
+    printf("Line %d, column %d: illegal character (%s)\n", line, col, yytext);
+    ucol();
+}
+
 \n   {
     if(last_token != OTHER){
-        printf("SEMICOLON\n");
+        if (print) printf("SEMICOLON\n");
         rlast();
     }
     uline();
 }
 %%
-int main()
+int main(int argc, char **argv)
 {
+    if(argc == 2 && strcmp(argv[1],"-l")==0)
+        print = true;
+    else 
+        print = false;
 yylex();
 return 0;
 }
