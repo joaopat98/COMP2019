@@ -23,7 +23,7 @@
         col = 1;
     }
     bool error = false;
-    char buf[1000] = "";
+    char buf[512] = "";
     int pos, lpos;
     token last_token = OTHER;
     void rlast(){
@@ -36,7 +36,7 @@
         strcat(buf, yytext);
     }
     void rbuf(){
-        buf[0] = 0;
+        memset(buf,0,sizeof(buf));
     }
 %}
 %X str seq comment multi_comment
@@ -167,6 +167,11 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
 }
 {func}   {
     if (print) printf("FUNC\n");
+    rlast();
+    ucol();
+}
+{else}  {
+    if (print) printf("ELSE\n");
     rlast();
     ucol();
 }
@@ -323,6 +328,8 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
 }
 <str>"\n" {
     printf("Line %d, column %d: unterminated string literal\n", line, pos);
+    rlast();
+    error = false;
     rbuf();
     uline();
     BEGIN 0;
