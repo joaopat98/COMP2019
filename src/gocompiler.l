@@ -328,6 +328,10 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
     BEGIN 0;
 }
 
+<str><<EOF>> {
+    printf("Line %d, column %d: unterminated string literal\n", line, pos);
+    return 1;
+}
 
 {int_lit}   {
     if (print) printf("INTLIT(%s)\n", yytext);
