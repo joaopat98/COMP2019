@@ -10,7 +10,7 @@
             "args": [
                 "-o",
                 ".bin/lex.yy.c",
-                "src/token_analyser.l"
+                "src/gocompiler.l"
             ]
         },
         {
