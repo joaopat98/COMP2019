@@ -53,7 +53,7 @@ real_lit    ({decimal}{exponent}?)|({int1}{exponent})
 esc_seq     \\
 illegal_esc [^fnrt\\\"]
 legal_esc   [fnrt\\\"]
-str_char    [^"\\\n]
+str_char    [^\"\\\n\r]
 str_delim   \"
 semicolon   ";"
 blank_id    "_"
@@ -95,6 +95,12 @@ func        "func"
 cmdargs     "os.Args"
 reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthrough"|"go"|"goto"|"import"|"interface"|"map"|"range"|"select"|"struct"|"switch"|"type"|"++"|"--"
 %%
+
+{reserved}  {
+    if (print) printf("RESERVED(%s)\n", yytext);
+    rlast();
+    ucol();
+}
 {string}   {
     if (print) printf("STRING\n");
     rlast();
@@ -237,7 +243,7 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
 }
 {blank_id}  {
     if (print) printf("BLANKID\n");
-    rlast();
+    slast(ID);
     ucol();
 }
 {assign}  {
@@ -280,24 +286,19 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
     rlast();
     ucol();
 }
-{reserved}  {
-    if (print) printf("RESERVED(%s)\n", yytext);
-    rlast();
-    ucol();
-}
 {str_delim}   {
     pos = col;
     ucol();
     BEGIN str;
 }
-<str>{str_char} {
-    abuf();
-    ucol();
-}
 <str>{esc_seq}  {
     abuf();
     ucol();
     BEGIN seq;
+}
+<str>{str_char} {
+    abuf();
+    ucol();
 }
 <seq>{legal_esc}    {
     abuf();
