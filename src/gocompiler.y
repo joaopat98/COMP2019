@@ -42,13 +42,19 @@ char* strval;
 Program: PACKAGE ID SEMICOLON Declarations;
 Declarations: VarDeclaration SEMICOLON Declarations
 | FuncDeclaration SEMICOLON Declarations
-|;
+| %empty;
 VarDeclaration: VAR VarSpec;
 VarDeclaration: VAR LPAR VarSpec SEMICOLON RPAR;
-VarSpec: ID {COMMA ID} Type;
+MultiId: COMMA ID MultiId
+| %empty;
+VarSpec: ID MultiId Type;
 Type: INT | FLOAT32 | BOOL | STRING;
-FuncDeclaration: FUNC ID LPAR [Parameters] RPAR [Type] FuncBody;
-Parameters: ID Type {COMMA ID Type};
+FuncDeclaration: FUNC ID LPAR Parameters RPAR Type FuncBody
+| FUNC ID LPAR RPAR Type FuncBody
+| FUNC ID LPAR Parameters RPAR FuncBody
+| FUNC ID LPAR RPAR FuncBody;
+Parameters: ID Type COMMA ID Type
+| ID Type;
 FuncBody: LBRACE VarsAndStatements RBRACE;
 VarsAndStatements: VarsAndStatements SEMICOLON
 | VarsAndStatements VarDeclaration SEMICOLON
