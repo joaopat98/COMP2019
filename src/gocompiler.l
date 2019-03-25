@@ -6,8 +6,6 @@
     #include <string.h>
     #include <stdbool.h>
 
-    struct
-
     typedef enum {
         Other,
         Id,
@@ -293,6 +291,7 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
     if (print) printf("ASSIGN\n");
     rlast();
     ucol();
+    return ASSIGN;
 }
 {lsq}  {
     if (print) printf("LSQ\n");
@@ -392,7 +391,7 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
     if (print) printf("INTLIT(%s)\n", yytext);
     slast(Intlit);
     ucol();
-    yylval.ival = atoi(yytext);
+    yylval.intval = atoi(yytext);
     return INTLIT;
 }
 {real_lit}   {
@@ -478,17 +477,11 @@ int yywrap() {
     return 1;
 }
 
-void yyerror (char *s)
-{
-printf ("%s\n", s);
-}
-
-int main(int argc, char **argv)
+int lex_init(int argc, char **argv)
 {
     if(argc == 2 && strcmp(argv[1],"-l")==0)
         print = true;
     else 
         print = false;
-    yyparse();
     return 0;
 }

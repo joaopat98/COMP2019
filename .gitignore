@@ -54,3 +54,17 @@ dkms.conf
 \.bin/
 
 src/gocompiler\.zip
+
+src/gocompiler\.tab\.c
+
+src/gocompiler\.tab\.h
+
+src/example\.txt
+
+src/lex\.yy\.c
+
+src/main
+
+src/y\.tab\.c
+
+src/y\.tab\.h

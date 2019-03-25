@@ -4,6 +4,9 @@
     void yyerror (const char *s);
 %}
 
+%define parse.error verbose
+
+
 %union {
 int intval;
 double realval;
@@ -59,7 +62,7 @@ FuncBody: LBRACE VarsAndStatements RBRACE;
 VarsAndStatements: VarsAndStatements SEMICOLON
 | VarsAndStatements VarDeclaration SEMICOLON
 | VarsAndStatements Statement SEMICOLON
-| ;
+| %empty;
 Statement: ID ASSIGN Expr
 | LBRACE MultiStatement RBRACE
 | IF Expr LBRACE MultiStatement RBRACE ELSE LBRACE MultiStatement RBRACE
@@ -73,13 +76,13 @@ Statement: ID ASSIGN Expr
 | PRINT LPAR Expr RPAR
 | PRINT LPAR STRLIT RPAR;
 MultiStatement: Statement SEMICOLON MultiStatement
-| ;
+| %empty;
 ParseArgs: ID COMMA BLANKID ASSIGN PARSEINT LPAR CMDARGS LSQ Expr RSQ RPAR;
 FuncInvocation: ID LPAR FuncArgs RPAR;
 FuncArgs: Expr ExtraFuncArgs
-| ;
+| %empty;
 ExtraFuncArgs: COMMA Expr ExtraFuncArgs
-| ;
+| %empty;
 Expr: Expr OR TerminalExpr
 | Expr AND TerminalExpr
 | Expr LT TerminalExpr
@@ -101,7 +104,14 @@ TerminalExpr: NOT TerminalExpr
 
 %%
 
-int main() {
+void  yyerror (const char *s) {
+    printf("%s\n", s);
+}
+
+int lex_init(int argc, char **argv);
+
+int main(int argc, char **argv) {
+    lex_init(argc, argv);
     yyparse();
     return 0;
 }
