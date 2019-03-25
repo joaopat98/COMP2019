@@ -49,8 +49,8 @@ VarSpec: ID {COMMA ID} Type;
 Type: INT | FLOAT32 | BOOL | STRING;
 FuncDeclaration: FUNC ID LPAR [Parameters] RPAR [Type] FuncBody;
 Parameters: ID Type {COMMA ID Type};
-FuncBody: LBRACE [VarsAndStatements] RBRACE;
-VarsAndStatements: VarsAndStatements [VarDeclaration | Statement] SEMICOLON;
+FuncBody: LBRACE VarsAndStatements RBRACE;
+VarsAndStatements: VarsAndStatements [VarDeclaration | Statement] SEMICOLON | ;
 Statement: ID ASSIGN Expr
 | LBRACE MultiStatement RBRACE
 | IF Expr LBRACE MultiStatement RBRACE ELSE LBRACE MultiStatement RBRACE
