@@ -1,3 +1,6 @@
+/*Guilherme Tavares - 2016228357 */
+/*Joao Patricio - 2016228013     */
+
 %{
     #include <string.h>
     #include <stdbool.h>
