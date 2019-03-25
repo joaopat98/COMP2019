@@ -2,19 +2,22 @@
 /*Joao Patricio - 2016228013     */
 
 %{
+    #include "y.tab.h"
     #include <string.h>
     #include <stdbool.h>
 
+    struct
+
     typedef enum {
-        OTHER,
-        ID,
-        INTLIT,
-        REALLIT,
-        STRLIT,
-        RETURN,
-        RPAR,
-        RSQ,
-        RBRACE
+        Other,
+        Id,
+        Intlit,
+        Reallit,
+        Strlit,
+        Return,
+        Rpar,
+        Rsq,
+        Rbrace
     } token;
     bool print = false;
     int line = 1, col = 1;
@@ -28,9 +31,9 @@
     bool error = false;
     char buf[512] = "";
     int pos, lpos;
-    token last_token = OTHER;
+    token last_token = Other;
     void rlast(){
-        last_token = OTHER;
+        last_token = Other;
     }
     void slast(token tok){
         last_token = tok;
@@ -103,156 +106,188 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
     if (print) printf("RESERVED(%s)\n", yytext);
     rlast();
     ucol();
+    yylval.strval = (char *) strdup(yytext);
+    return RESERVED;
 }
 {string}   {
     if (print) printf("STRING\n");
     rlast();
     ucol();
+    return STRING;
 }
 {bool}   {
     if (print) printf("BOOL\n");
     rlast();
     ucol();
+    return BOOL;
 }
 {float32}   {
     if (print) printf("FLOAT32\n");
     rlast();
     ucol();
+    return FLOAT32;
 }
 {or}   {
     if (print) printf("OR\n");
     rlast();
     ucol();
+    return OR;
 }
 {not}   {
     if (print) printf("NOT\n");
     rlast();
     ucol();
+    return NOT;
 }
 {ne}   {
     if (print) printf("NE\n");
     rlast();
     ucol();
+    return NE;
 }
 {mod}   {
     if (print) printf("MOD\n");
     rlast();
     ucol();
+    return MOD;
 }
 {le}   {
     if (print) printf("LE\n");
     rlast();
     ucol();
+    return LE;
 }
 {lt}   {
     if (print) printf("LT\n");
     rlast();
     ucol();
+    return LT;
 }
 {ge}   {
     if (print) printf("GE\n");
     rlast();
     ucol();
+    return GE;
 }
 {gt}   {
     if (print) printf("GT\n");
     rlast();
     ucol();
+    return GT;
 }
 {div}   {
     if (print) printf("DIV\n");
     rlast();
     ucol();
+    return DIV;
 }
 {and}   {
     if (print) printf("AND\n");
     rlast();
     ucol();
+    return AND;
 }
 {package}   {
     if (print) printf("PACKAGE\n");
     rlast();
     ucol();
+    return PACKAGE;
 }
 {func}   {
     if (print) printf("FUNC\n");
     rlast();
     ucol();
+    return FUNC;
 }
 {else}  {
     if (print) printf("ELSE\n");
     rlast();
     ucol();
+    return ELSE;
 }
 {l_par}   {
     if (print) printf("LPAR\n");
     rlast();
     ucol();
+    return LPAR;
 }
 {r_par}   {
     if (print) printf("RPAR\n");
-    slast(RPAR);
+    slast(Rpar);
     ucol();
+    return RPAR;
 }
 {int}   {
     if (print) printf("INT\n");
     rlast();
     ucol();
+    return INT;
 }
 {l_brace}   {
     if (print) printf("LBRACE\n");
     rlast();
     ucol();
+    return LBRACE;
 }
 {r_brace}   {
     if (print) printf("RBRACE\n");
-    slast(RBRACE);
+    slast(Rbrace);
     ucol();
+    return RBRACE;
 }
 {if}   {
     if (print) printf("IF\n");
     rlast();
     ucol();
+    return IF;
 }
 {eq}   {
     if (print) printf("EQ\n");
     rlast();
     ucol();
+    return EQ;
 }
 {for}   {
     if (print) printf("FOR\n");
     rlast();
     ucol();
+    return FOR;
 }
 {plus}  {
     if (print) printf("PLUS\n");
     rlast();
     ucol();
+    return PLUS;
 }
 {return}   {
     if (print) printf("RETURN\n");
-    slast(RETURN);
+    slast(Return);
     ucol();
+    return RETURN;
 }
 {semicolon}   {
     if (print) printf("SEMICOLON\n");
     rlast();
     ucol();
+    return SEMICOLON;
 }
 {star}   {
     if (print) printf("STAR\n");
     rlast();
     ucol();
+    return STAR;
 }
 {minus} {
     if (print) printf("MINUS\n");
     rlast();
     ucol();
+    return MINUS;
 }
 {blank_id}  {
     if (print) printf("BLANKID\n");
-    slast(ID);
+    slast(Id);
     ucol();
+    return BLANKID;
 }
 {assign}  {
     if (print) printf("ASSIGN\n");
@@ -263,36 +298,43 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
     if (print) printf("LSQ\n");
     rlast();
     ucol();
+    return LSQ;
 }
 {rsq}  {
     if (print) printf("RSQ\n");
-    slast(RSQ);
+    slast(Rsq);
     ucol();
+    return RSQ;
 }
 {var}   {
     if (print) printf("VAR\n");
     rlast();
     ucol();
+    return VAR;
 }
 {comma}   {
     if (print) printf("COMMA\n");
     rlast();
     ucol();
+    return COMMA;
 }
 {parse_int}   {
     if (print) printf("PARSEINT\n");
     rlast();
     ucol();
+    return PARSEINT;
 }
 {cmdargs}   {
     if (print) printf("CMDARGS\n");
     rlast();
     ucol();
+    return CMDARGS;
 }
 {print}   {
     if (print) printf("PRINT\n");
     rlast();
     ucol();
+    return PRINT;
 }
 {str_delim}   {
     pos = col;
@@ -321,14 +363,16 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
     BEGIN str;
 }
 <str>{str_delim}    {
-    if (!error){
-        if (print) printf("STRLIT(\"%s\")\n",buf);
-        slast(STRLIT);
-    }
-    error = false;
     rbuf();
     ucol();
     BEGIN 0;
+    if (!error){
+        if (print) printf("STRLIT(\"%s\")\n",buf);
+        slast(Strlit);
+        yylval.strval = (char *) strdup(buf);
+        error = false;
+        return STRLIT;
+    }
 }
 <str>"\n" {
     printf("Line %d, column %d: unterminated string literal\n", line, pos);
@@ -346,18 +390,24 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
 
 {int_lit}   {
     if (print) printf("INTLIT(%s)\n", yytext);
-    slast(INTLIT);
+    slast(Intlit);
     ucol();
+    yylval.ival = atoi(yytext);
+    return INTLIT;
 }
 {real_lit}   {
     if (print) printf("REALLIT(%s)\n", yytext);
-    slast(REALLIT);
+    slast(Reallit);
     ucol();
+    yylval.realval = atof(yytext);
+    return REALLIT;
 }
 {id}    {
     if (print) printf("ID(%s)\n", yytext);
-    slast(ID);
+    slast(Id);
     ucol();
+    yylval.strval = (char *) strdup(yytext);
+    return ID;
 }
 
 "//"  {
@@ -374,7 +424,7 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
     ucol();
 }
 <comment>\n {
-    if(last_token != OTHER){
+    if(last_token != Other){
         if (print) printf("SEMICOLON\n");
         rlast();
     }
@@ -400,9 +450,10 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
 }
 
 <<EOF>> {
-    if(last_token != OTHER){
+    if(last_token != Other){
         if (print) printf("SEMICOLON\n");
         rlast();
+        return SEMICOLON;
     }
     uline();
     return 0;
@@ -414,24 +465,30 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
 }
 
 \n   {
-    if(last_token != OTHER){
+    if(last_token != Other){
         if (print) printf("SEMICOLON\n");
         rlast();
+        return SEMICOLON;
     }
     uline();
 }
 %%
+
+int yywrap() {
+    return 1;
+}
+
+void yyerror (char *s)
+{
+printf ("%s\n", s);
+}
+
 int main(int argc, char **argv)
 {
     if(argc == 2 && strcmp(argv[1],"-l")==0)
         print = true;
     else 
         print = false;
-yylex();
-return 0;
-}
-
-int yywrap()
-{
-return 1;
+    yyparse();
+    return 0;
 }
