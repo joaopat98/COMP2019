@@ -50,17 +50,24 @@ Type: INT | FLOAT32 | BOOL | STRING;
 FuncDeclaration: FUNC ID LPAR [Parameters] RPAR [Type] FuncBody;
 Parameters: ID Type {COMMA ID Type};
 FuncBody: LBRACE VarsAndStatements RBRACE;
-VarsAndStatements: VarsAndStatements [VarDeclaration | Statement] SEMICOLON | ;
+VarsAndStatements: VarsAndStatements SEMICOLON
+| VarsAndStatements VarDeclaration SEMICOLON
+| VarsAndStatements Statement SEMICOLON
+| ;
 Statement: ID ASSIGN Expr
 | LBRACE MultiStatement RBRACE
 | IF Expr LBRACE MultiStatement RBRACE ELSE LBRACE MultiStatement RBRACE
-| IF Expr LBRACE MultiStatement RBRACE;
+| IF Expr LBRACE MultiStatement RBRACE
+| FOR Expr LBRACE MultiStatement RBRACE
+| FOR LBRACE MultiStatement RBRACE
+| RETURN Expr
+| RETURN
+| FuncInvocation
+| ParseArgs
+| PRINT LPAR Expr RPAR
+| PRINT LPAR STRLIT RPAR;
 MultiStatement: Statement SEMICOLON MultiStatement
 | ;
-Statement: FOR [Expr] LBRACE {Statement SEMICOLON} RBRACE;
-Statement: RETURN [Expr];
-Statement: FuncInvocation | ParseArgs;
-Statement: PRINT LPAR (Expr | STRLIT) RPAR;
 ParseArgs: ID COMMA BLANKID ASSIGN PARSEINT LPAR CMDARGS LSQ Expr RSQ RPAR;
 FuncInvocation: ID LPAR FuncArgs RPAR;
 FuncArgs: Expr ExtraFuncArgs
