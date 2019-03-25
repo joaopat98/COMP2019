@@ -8,15 +8,20 @@
 %%
 
 Program		: PACKAGE ID SEMICOLON Declarations;
-Declarations	:{VarDeclaration SEMICOLON | FuncDeclaration SEMICOLON};
+Declarations	: VarDeclaration SEMICOLON Declarations
+		| FuncDeclaration SEMICOLON Declarations
+		| %empty;
 VarDeclaration	: VAR VarSpec
 		| VAR LPAR VarSpec SEMICOLON RPAR;
-VarSpec		: ID {COMMA ID} Type;
+VarSpec		: ID VarSpec
+		| COMMA ID VarSpec
+		| Type;
 Type		: INT | FLOAT32 | BOOL | STRING;
 FuncDeclaration	: FUNC ID LPAR [Parameters] RPAR [Type] FuncBody;
 Parameters	: ID Type {COMMA ID Type};
-FuncBody	: LBRACE [VarsAndStatements] RBRACE;
-VarsAndStatements	: VarsAndStatements [VarDeclaration | Statement] SEMICOLON;
+FuncBody	: LBRACE VarsAndStatements RBRACE;
+VarsAndStatements	: VarsAndStatements [VarDeclaration | Statement] SEMICOLON
+		| %empty;
 Statement	: ID ASSIGN Expr
 		| LBRACE {Statement SEMICOLON} RBRACE
 		| IF Expr LBRACE {Statement SEMICOLON} RBRACE [ELSE LBRACE {Statement SEMICOLON} RBRACE]
