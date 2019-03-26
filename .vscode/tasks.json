@@ -9,30 +9,38 @@
             "command": "flex",
             "args": [
                 "-o",
-                ".bin/lex.yy.c",
+                ".bin/yy.lex.c",
                 "src/gocompiler.l"
             ]
         },
         {
-            "label": "Compile Lex C",
+            "label": "Compile Yacc",
+            "dependsOn": "Compile Lex",
             "type": "shell",
-            "command": "clang",
+            "command": "yacc",
             "args": [
-                ".bin/lex.yy.c",
+                "-d",
                 "-o",
-                ".bin/main.o"
+                ".bin/y.tab.c",
+                "src/gocompiler.y"
             ]
         },
         {
-            "label": "Build",
-            "dependsOn": [
-                "Compile Lex",
-                "Compile Lex C"
+            "label": "Compile Binary",
+            "dependsOn": "Compile Yacc",
+            "type": "shell",
+            "command": "clang",
+            "args": [
+                "-g",
+                "-o",
+                ".bin/main",
+                ".bin/y.tab.c",
+                ".bin/yy.lex.c",
             ],
             "group": {
                 "kind": "build",
                 "isDefault": true
             }
-        }
+        },
     ]
 }

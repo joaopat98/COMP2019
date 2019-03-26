@@ -8,10 +8,10 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/.bin/main.o",
+            "program": "${workspaceFolder}/.bin/main",
             "args": [
                 "<",
-                "examples/factorial.dgo"
+                "examples/expr_test.dgo"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

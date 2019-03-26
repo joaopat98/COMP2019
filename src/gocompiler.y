@@ -2,15 +2,18 @@
     #include <stdio.h>
     int yylex(void);
     void yyerror (const char *s);
+    int line, col, yyleng;
+    char *yytext;
 %}
 
+/*
 %define parse.error verbose
-
+*/
 
 %union {
-int intval;
-double realval;
-char* strval;
+    int intval;
+    double realval;
+    char* strval;
 }
 
 %token ID
@@ -39,6 +42,15 @@ char* strval;
 %token FUNC
 %token CMDARGS
 %token RESERVED
+%token IMPORTANT
+
+%right ASSIGN
+%left AND OR
+%left GE GT LE LT EQ NE
+%left PLUS MINUS
+%left STAR DIV MOD
+%left LPAR
+%right IMPORTANT
 
 %%
 
@@ -74,44 +86,47 @@ Statement: ID ASSIGN Expr
 | FuncInvocation
 | ParseArgs
 | PRINT LPAR Expr RPAR
-| PRINT LPAR STRLIT RPAR;
+| PRINT LPAR STRLIT RPAR
+| error;
 MultiStatement: Statement SEMICOLON MultiStatement
 | %empty;
-ParseArgs: ID COMMA BLANKID ASSIGN PARSEINT LPAR CMDARGS LSQ Expr RSQ RPAR;
-FuncInvocation: ID LPAR FuncArgs RPAR;
+ParseArgs: ID COMMA BLANKID ASSIGN PARSEINT LPAR CMDARGS LSQ Expr RSQ RPAR
+| ID COMMA BLANKID ASSIGN PARSEINT LPAR error RPAR;
+FuncInvocation: ID LPAR FuncArgs RPAR
+| ID LPAR error RPAR;
 FuncArgs: Expr ExtraFuncArgs
 | %empty;
 ExtraFuncArgs: COMMA Expr ExtraFuncArgs
 | %empty;
-Expr: Expr OR TerminalExpr
-| Expr AND TerminalExpr
-| Expr LT TerminalExpr
-| Expr GT TerminalExpr
-| Expr EQ TerminalExpr
-| Expr NE TerminalExpr
-| Expr LE TerminalExpr
-| Expr GE TerminalExpr
-| Expr PLUS TerminalExpr
-| Expr MINUS TerminalExpr
-| Expr STAR TerminalExpr
-| Expr DIV TerminalExpr
-| Expr MOD TerminalExpr;
-| TerminalExpr;
-TerminalExpr: NOT TerminalExpr
-| MINUS TerminalExpr
-| PLUS TerminalExpr
-| INTLIT | REALLIT | ID | FuncInvocation | LPAR Expr RPAR;
+Expr: Expr OR Expr
+| Expr AND Expr
+| Expr LT Expr
+| Expr GT Expr
+| Expr EQ Expr
+| Expr NE Expr
+| Expr LE Expr
+| Expr GE Expr
+| Expr PLUS Expr
+| Expr MINUS Expr
+| Expr STAR Expr
+| Expr DIV Expr
+| Expr MOD Expr
+| NOT Expr %prec IMPORTANT
+| MINUS Expr %prec IMPORTANT
+| PLUS Expr %prec IMPORTANT
+| INTLIT | REALLIT | ID | FuncInvocation | LPAR Expr RPAR
+| LPAR error RPAR;
 
 %%
 
 void  yyerror (const char *s) {
-    printf("%s\n", s);
+    printf ("Line %d, column %d: %s: %s\n", line, col - yyleng, s, yytext );
 }
 
 int lex_init(int argc, char **argv);
 
 int main(int argc, char **argv) {
-    lex_init(argc, argv);
+    lex_init(argc, argv);   
     yyparse();
     return 0;
 }

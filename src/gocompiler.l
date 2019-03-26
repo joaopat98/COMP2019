@@ -27,7 +27,7 @@
         col = 1;
     }
     bool error = false;
-    char buf[512] = "";
+    char buf[512];
     int pos, lpos;
     token last_token = Other;
     void rlast(){
@@ -337,6 +337,7 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
 }
 {str_delim}   {
     pos = col;
+    buf[0] = 0;
     ucol();
     BEGIN str;
 }
@@ -362,11 +363,14 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
     BEGIN str;
 }
 <str>{str_delim}    {
-    rbuf();
     ucol();
     BEGIN 0;
     if (!error){
-        if (print) printf("STRLIT(\"%s\")\n",buf);
+
+        if (print) {
+            printf("STRLIT(\"%s\")\n",buf);
+        }
+        rbuf();
         slast(Strlit);
         yylval.strval = (char *) strdup(buf);
         error = false;
