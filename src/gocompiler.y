@@ -1,5 +1,6 @@
 %{
     #include <stdio.h>
+    #include <string.h>
     int yylex(void);
     void yyerror (const char *s);
     int line, col, yyleng;
@@ -59,7 +60,7 @@ Declarations: VarDeclaration SEMICOLON Declarations
 | FuncDeclaration SEMICOLON Declarations
 | %empty;
 VarDeclaration: VAR VarSpec;
-VarDeclaration: VAR LPAR VarSpec SEMICOLON RPAR;
+| VAR LPAR VarSpec SEMICOLON RPAR;
 MultiId: COMMA ID MultiId
 | %empty;
 VarSpec: ID MultiId Type;
@@ -68,8 +69,9 @@ FuncDeclaration: FUNC ID LPAR Parameters RPAR Type FuncBody
 | FUNC ID LPAR RPAR Type FuncBody
 | FUNC ID LPAR Parameters RPAR FuncBody
 | FUNC ID LPAR RPAR FuncBody;
-Parameters: ID Type COMMA ID Type
-| ID Type;
+Parameters: ID Type MultiParam
+MultiParam: COMMA ID Type MultiParam
+| %empty;
 FuncBody: LBRACE VarsAndStatements RBRACE;
 VarsAndStatements: VarsAndStatements SEMICOLON
 | VarsAndStatements VarDeclaration SEMICOLON
@@ -92,10 +94,9 @@ MultiStatement: Statement SEMICOLON MultiStatement
 | %empty;
 ParseArgs: ID COMMA BLANKID ASSIGN PARSEINT LPAR CMDARGS LSQ Expr RSQ RPAR
 | ID COMMA BLANKID ASSIGN PARSEINT LPAR error RPAR;
-FuncInvocation: ID LPAR FuncArgs RPAR
+FuncInvocation: ID LPAR Expr ExtraFuncArgs RPAR
+| ID LPAR RPAR
 | ID LPAR error RPAR;
-FuncArgs: Expr ExtraFuncArgs
-| %empty;
 ExtraFuncArgs: COMMA Expr ExtraFuncArgs
 | %empty;
 Expr: Expr OR Expr
@@ -126,7 +127,11 @@ void  yyerror (const char *s) {
 int lex_init(int argc, char **argv);
 
 int main(int argc, char **argv) {
-    lex_init(argc, argv);   
+    lex_init(argc, argv);
+    if(argc >= 2 && strcmp(argv[1],"-l")==0) {
+        yylex();
+        return 0;
+    }
     yyparse();
     return 0;
 }

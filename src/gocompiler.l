@@ -105,235 +105,235 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
     rlast();
     ucol();
     yylval.strval = (char *) strdup(yytext);
-    return RESERVED;
+    if (!print) return RESERVED;
 }
 {string}   {
     if (print) printf("STRING\n");
     rlast();
     ucol();
-    return STRING;
+    if (!print) return STRING;
 }
 {bool}   {
     if (print) printf("BOOL\n");
     rlast();
     ucol();
-    return BOOL;
+    if (!print) return BOOL;
 }
 {float32}   {
     if (print) printf("FLOAT32\n");
     rlast();
     ucol();
-    return FLOAT32;
+    if (!print) return FLOAT32;
 }
 {or}   {
     if (print) printf("OR\n");
     rlast();
     ucol();
-    return OR;
+    if (!print) return OR;
 }
 {not}   {
     if (print) printf("NOT\n");
     rlast();
     ucol();
-    return NOT;
+    if (!print) return NOT;
 }
 {ne}   {
     if (print) printf("NE\n");
     rlast();
     ucol();
-    return NE;
+    if (!print) return NE;
 }
 {mod}   {
     if (print) printf("MOD\n");
     rlast();
     ucol();
-    return MOD;
+    if (!print) return MOD;
 }
 {le}   {
     if (print) printf("LE\n");
     rlast();
     ucol();
-    return LE;
+    if (!print) return LE;
 }
 {lt}   {
     if (print) printf("LT\n");
     rlast();
     ucol();
-    return LT;
+    if (!print) return LT;
 }
 {ge}   {
     if (print) printf("GE\n");
     rlast();
     ucol();
-    return GE;
+    if (!print) return GE;
 }
 {gt}   {
     if (print) printf("GT\n");
     rlast();
     ucol();
-    return GT;
+    if (!print) return GT;
 }
 {div}   {
     if (print) printf("DIV\n");
     rlast();
     ucol();
-    return DIV;
+    if (!print) return DIV;
 }
 {and}   {
     if (print) printf("AND\n");
     rlast();
     ucol();
-    return AND;
+    if (!print) return AND;
 }
 {package}   {
     if (print) printf("PACKAGE\n");
     rlast();
     ucol();
-    return PACKAGE;
+    if (!print) return PACKAGE;
 }
 {func}   {
     if (print) printf("FUNC\n");
     rlast();
     ucol();
-    return FUNC;
+    if (!print) return FUNC;
 }
 {else}  {
     if (print) printf("ELSE\n");
     rlast();
     ucol();
-    return ELSE;
+    if (!print) return ELSE;
 }
 {l_par}   {
     if (print) printf("LPAR\n");
     rlast();
     ucol();
-    return LPAR;
+    if (!print) return LPAR;
 }
 {r_par}   {
     if (print) printf("RPAR\n");
     slast(Rpar);
     ucol();
-    return RPAR;
+    if (!print) return RPAR;
 }
 {int}   {
     if (print) printf("INT\n");
     rlast();
     ucol();
-    return INT;
+    if (!print) return INT;
 }
 {l_brace}   {
     if (print) printf("LBRACE\n");
     rlast();
     ucol();
-    return LBRACE;
+    if (!print) return LBRACE;
 }
 {r_brace}   {
     if (print) printf("RBRACE\n");
     slast(Rbrace);
     ucol();
-    return RBRACE;
+    if (!print) return RBRACE;
 }
 {if}   {
     if (print) printf("IF\n");
     rlast();
     ucol();
-    return IF;
+    if (!print) return IF;
 }
 {eq}   {
     if (print) printf("EQ\n");
     rlast();
     ucol();
-    return EQ;
+    if (!print) return EQ;
 }
 {for}   {
     if (print) printf("FOR\n");
     rlast();
     ucol();
-    return FOR;
+    if (!print) return FOR;
 }
 {plus}  {
     if (print) printf("PLUS\n");
     rlast();
     ucol();
-    return PLUS;
+    if (!print) return PLUS;
 }
 {return}   {
     if (print) printf("RETURN\n");
     slast(Return);
     ucol();
-    return RETURN;
+    if (!print) return RETURN;
 }
 {semicolon}   {
     if (print) printf("SEMICOLON\n");
     rlast();
     ucol();
-    return SEMICOLON;
+    if (!print) return SEMICOLON;
 }
 {star}   {
     if (print) printf("STAR\n");
     rlast();
     ucol();
-    return STAR;
+    if (!print) return STAR;
 }
 {minus} {
     if (print) printf("MINUS\n");
     rlast();
     ucol();
-    return MINUS;
+    if (!print) return MINUS;
 }
 {blank_id}  {
     if (print) printf("BLANKID\n");
     slast(Id);
     ucol();
-    return BLANKID;
+    if (!print) return BLANKID;
 }
 {assign}  {
     if (print) printf("ASSIGN\n");
     rlast();
     ucol();
-    return ASSIGN;
+    if (!print) return ASSIGN;
 }
 {lsq}  {
     if (print) printf("LSQ\n");
     rlast();
     ucol();
-    return LSQ;
+    if (!print) return LSQ;
 }
 {rsq}  {
     if (print) printf("RSQ\n");
     slast(Rsq);
     ucol();
-    return RSQ;
+    if (!print) return RSQ;
 }
 {var}   {
     if (print) printf("VAR\n");
     rlast();
     ucol();
-    return VAR;
+    if (!print) return VAR;
 }
 {comma}   {
     if (print) printf("COMMA\n");
     rlast();
     ucol();
-    return COMMA;
+    if (!print) return COMMA;
 }
 {parse_int}   {
     if (print) printf("PARSEINT\n");
     rlast();
     ucol();
-    return PARSEINT;
+    if (!print) return PARSEINT;
 }
 {cmdargs}   {
     if (print) printf("CMDARGS\n");
     rlast();
     ucol();
-    return CMDARGS;
+    if (!print) return CMDARGS;
 }
 {print}   {
     if (print) printf("PRINT\n");
     rlast();
     ucol();
-    return PRINT;
+    if (!print) return PRINT;
 }
 {str_delim}   {
     pos = col;
@@ -374,7 +374,7 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
         slast(Strlit);
         yylval.strval = (char *) strdup(buf);
         error = false;
-        return STRLIT;
+        if (!print) return STRLIT;
     }
 }
 <str>"\n" {
@@ -396,21 +396,21 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
     slast(Intlit);
     ucol();
     yylval.intval = atoi(yytext);
-    return INTLIT;
+    if (!print) return INTLIT;
 }
 {real_lit}   {
     if (print) printf("REALLIT(%s)\n", yytext);
     slast(Reallit);
     ucol();
     yylval.realval = atof(yytext);
-    return REALLIT;
+    if (!print) return REALLIT;
 }
 {id}    {
     if (print) printf("ID(%s)\n", yytext);
     slast(Id);
     ucol();
     yylval.strval = (char *) strdup(yytext);
-    return ID;
+    if (!print) return ID;
 }
 
 "//"  {
@@ -456,7 +456,7 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
     if(last_token != Other){
         if (print) printf("SEMICOLON\n");
         rlast();
-        return SEMICOLON;
+        if (!print) return SEMICOLON;
     }
     uline();
     return 0;
@@ -468,12 +468,12 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
 }
 
 \n   {
+    uline();
     if(last_token != Other){
         if (print) printf("SEMICOLON\n");
         rlast();
-        return SEMICOLON;
+        if (!print) return SEMICOLON;
     }
-    uline();
 }
 %%
 
