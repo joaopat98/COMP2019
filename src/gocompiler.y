@@ -103,6 +103,14 @@
         ptr->next = new_child;
     }
 
+    int count(Node *n) {
+        int i = 0;
+        for(Node *ptr = n; ptr != NULL; ptr = ptr->next){
+            i++;
+        }
+        return i;
+    }
+
     Node root_node;
 
 %}
@@ -254,32 +262,127 @@ FuncBody: LBRACE VarsAndStatements RBRACE {
     $$ = new_empty_node(FuncBody);
     append_child($$, $2);
 };
-VarsAndStatements: SEMICOLON VarsAndStatements
-| VarDeclaration SEMICOLON VarsAndStatements
-| Statement SEMICOLON VarsAndStatements
-| %empty;
-Statement: ID ASSIGN Expr
-| LBRACE MultiStatement RBRACE
-| IF Expr LBRACE MultiStatement RBRACE ELSE LBRACE MultiStatement RBRACE
-| IF Expr LBRACE MultiStatement RBRACE
-| FOR Expr LBRACE MultiStatement RBRACE
-| FOR LBRACE MultiStatement RBRACE
-| RETURN Expr
-| RETURN
-| FuncInvocation
-| ParseArgs
-| PRINT LPAR Expr RPAR
-| PRINT LPAR STRLIT RPAR
-| error;
-MultiStatement: Statement SEMICOLON MultiStatement
-| %empty;
-ParseArgs: ID COMMA BLANKID ASSIGN PARSEINT LPAR CMDARGS LSQ Expr RSQ RPAR
-| ID COMMA BLANKID ASSIGN PARSEINT LPAR error RPAR;
-FuncInvocation: ID LPAR Expr ExtraFuncArgs RPAR
-| ID LPAR RPAR
-| ID LPAR error RPAR;
-ExtraFuncArgs: COMMA Expr ExtraFuncArgs
-| %empty;
+VarsAndStatements: SEMICOLON VarsAndStatements {
+    $$ = $2;
+}
+| VarDeclaration SEMICOLON VarsAndStatements {
+    $$ = $1;
+    add_neighbour($$, $3);
+}
+| Statement SEMICOLON VarsAndStatements {
+    $$ = $1;
+    add_neighbour($$, $3);
+}
+| %empty {
+    $$ = NULL;
+};
+Statement: ID ASSIGN Expr {
+    $$ = new_empty_node(Assign);
+    append_child($$, new_node(Id, $1));
+    append_child($$, $3);
+}
+| LBRACE MultiStatement RBRACE {
+    if (count($2) < 2) {
+        $$ = $2;
+    } else {
+        $$ = new_empty_node(Block);
+        append_child($$, $2);
+    }
+}
+| IF Expr LBRACE MultiStatement RBRACE ELSE LBRACE MultiStatement RBRACE {
+    $$ = new_empty_node(If);
+    append_child($$, $2);
+    Node *first_block = new_empty_node(Block);
+    append_child(first_block, $4);
+    append_child($$, first_block);
+    Node *second_block = new_empty_node(Block);
+    append_child(second_block, $8);
+    append_child($$, second_block);
+}
+| IF Expr LBRACE MultiStatement RBRACE {
+    $$ = new_empty_node(If);
+    append_child($$, $2);
+    Node *first_block = new_empty_node(Block);
+    append_child(first_block, $4);
+    append_child($$, first_block);
+}
+| FOR Expr LBRACE MultiStatement RBRACE {
+    $$ = new_empty_node(For);
+    append_child($$, $2);
+    Node *first_block = new_empty_node(Block);
+    append_child(first_block, $4);
+    append_child($$, first_block);
+}
+| FOR LBRACE MultiStatement RBRACE {
+    $$ = new_empty_node(For);
+    Node *first_block = new_empty_node(Block);
+    append_child(first_block, $3);
+    append_child($$, first_block);
+}
+| RETURN Expr {
+    $$ = new_empty_node(Return);
+    append_child($$, $1);
+}
+| RETURN {
+    $$ = new_empty_node(Return);
+}
+| FuncInvocation {
+    $$ = $1;
+}
+| ParseArgs {
+    $$ = $1;
+}
+| PRINT LPAR Expr RPAR {
+    $$ = new_empty_node(Print);
+    append_child($$, $3);
+}
+| PRINT LPAR STRLIT RPAR {
+    $$ = new_empty_node(Print);
+    append_child($$, new_node(StrLit, $3));
+}
+| error {
+    $$ = NULL;
+};
+MultiStatement: Statement SEMICOLON MultiStatement {
+    $$ = $1;
+    add_neighbour($$, $3);
+}
+| %empty {
+    $$ = NULL;
+};
+ParseArgs: ID COMMA BLANKID ASSIGN PARSEINT LPAR CMDARGS LSQ Expr RSQ RPAR {
+    $$ = new_empty_node(ParseArgs);
+    append_child($$, new_node(Id, $1));
+    append_child($$, $9);
+}
+| ID COMMA BLANKID ASSIGN PARSEINT LPAR error RPAR {
+    $$ = new_empty_node(ParseArgs);
+    append_child($$, new_node(Id, $1));
+};
+FuncInvocation: ID LPAR FuncArgs RPAR {
+    $$ = new_empty_node(Call);
+    append_child($$, new_node(Id, $1));
+    append_child($$, $3);
+}
+| ID LPAR RPAR {
+    $$ = new_empty_node(Call);
+    append_child($$, new_node(Id, $1));
+}
+| ID LPAR error RPAR {
+    $$ = new_empty_node(Call);
+    append_child($$, new_node(Id, $1));
+};
+FuncArgs: Expr MultiFuncArgs {
+    $$ = $1;
+    add_neighbour($$, $2);
+};
+MultiFuncArgs: COMMA Expr MultiFuncArgs {
+    $$ = $2;
+    add_neighbour($$, $3);
+}
+| %empty {
+    $$ = NULL;
+};
 Expr: Expr OR Expr
 | Expr AND Expr
 | Expr LT Expr
