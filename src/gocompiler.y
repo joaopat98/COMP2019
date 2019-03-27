@@ -145,13 +145,11 @@
 %token RESERVED
 %token IMPORTANT
 
-%right ASSIGN
 %left AND OR
 %left GE GT LE LT EQ NE
 %left PLUS MINUS
 %left STAR DIV MOD
-%left LPAR
-%right IMPORTANT
+%precedence IMPORTANT
 
 %%
 
@@ -256,9 +254,9 @@ FuncBody: LBRACE VarsAndStatements RBRACE {
     $$ = new_empty_node(FuncBody);
     append_child($$, $2);
 };
-VarsAndStatements: VarsAndStatements SEMICOLON
-| VarsAndStatements VarDeclaration SEMICOLON
-| VarsAndStatements Statement SEMICOLON
+VarsAndStatements: SEMICOLON VarsAndStatements
+| VarDeclaration SEMICOLON VarsAndStatements
+| Statement SEMICOLON VarsAndStatements
 | %empty;
 Statement: ID ASSIGN Expr
 | LBRACE MultiStatement RBRACE

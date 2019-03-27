@@ -69,3 +69,5 @@ src/main
 src/y\.tab\.c
 
 src/y\.tab\.h
+
+src/y\.output
