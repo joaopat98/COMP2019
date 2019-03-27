@@ -427,12 +427,13 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
     ucol();
 }
 <comment>\n {
+    uline();
+    BEGIN 0;
     if(last_token != Other){
         if (print) printf("SEMICOLON\n");
         rlast();
+        if (!print) return SEMICOLON;
     }
-    uline();
-    BEGIN 0;
 }
 <multi_comment><<EOF>>  {
     printf("Line %d, column %d: unterminated comment\n", lpos, pos);
@@ -489,3 +490,5 @@ int lex_init(int argc, char **argv)
         print = false;
     return 0;
 }
+
+
