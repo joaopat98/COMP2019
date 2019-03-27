@@ -45,13 +45,11 @@
 %token RESERVED
 %token IMPORTANT
 
-%right ASSIGN
 %left AND OR
 %left GE GT LE LT EQ NE
 %left PLUS MINUS
 %left STAR DIV MOD
-%left LPAR
-%right IMPORTANT
+%precedence IMPORTANT
 
 %%
 
@@ -61,21 +59,21 @@ Declarations: VarDeclaration SEMICOLON Declarations
 | %empty;
 VarDeclaration: VAR VarSpec;
 | VAR LPAR VarSpec SEMICOLON RPAR;
+VarSpec: ID MultiId Type;
 MultiId: COMMA ID MultiId
 | %empty;
-VarSpec: ID MultiId Type;
 Type: INT | FLOAT32 | BOOL | STRING;
 FuncDeclaration: FUNC ID LPAR Parameters RPAR Type FuncBody
 | FUNC ID LPAR RPAR Type FuncBody
 | FUNC ID LPAR Parameters RPAR FuncBody
 | FUNC ID LPAR RPAR FuncBody;
-Parameters: ID Type MultiParam
+Parameters: ID Type MultiParam;
 MultiParam: COMMA ID Type MultiParam
 | %empty;
 FuncBody: LBRACE VarsAndStatements RBRACE;
-VarsAndStatements: VarsAndStatements SEMICOLON
-| VarsAndStatements VarDeclaration SEMICOLON
-| VarsAndStatements Statement SEMICOLON
+VarsAndStatements: SEMICOLON VarsAndStatements
+| VarDeclaration SEMICOLON VarsAndStatements
+| Statement SEMICOLON VarsAndStatements
 | %empty;
 Statement: ID ASSIGN Expr
 | LBRACE MultiStatement RBRACE
