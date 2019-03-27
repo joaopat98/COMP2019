@@ -57,11 +57,11 @@ Program: PACKAGE ID SEMICOLON Declarations;
 Declarations: VarDeclaration SEMICOLON Declarations
 | FuncDeclaration SEMICOLON Declarations
 | %empty;
-VarDeclaration: VAR VarSpec;
+VarDeclaration: VAR VarSpec
 | VAR LPAR VarSpec SEMICOLON RPAR;
-VarSpec: ID MultiId Type;
 MultiId: COMMA ID MultiId
 | %empty;
+VarSpec: ID MultiId Type;
 Type: INT | FLOAT32 | BOOL | STRING;
 FuncDeclaration: FUNC ID LPAR Parameters RPAR Type FuncBody
 | FUNC ID LPAR RPAR Type FuncBody
