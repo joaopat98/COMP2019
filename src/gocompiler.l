@@ -18,12 +18,15 @@
         Rbrace
     } token;
     bool print = false;
+    bool is_string = false;
     int line = 1, col = 1;
+    int prev_col;
     void ucol(){
         col += yyleng;
     }
     void uline(){
         line++;
+        prev_col = col;
         col = 1;
     }
     bool error = false;
@@ -32,9 +35,11 @@
     token last_token = Other;
     void rlast(){
         last_token = Other;
+        is_string = false;
     }
     void slast(token tok){
         last_token = tok;
+        is_string = tok == Strlit ? true : false;
     }
     void abuf(){
         strcat(buf, yytext);
@@ -337,7 +342,6 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
 }
 {str_delim}   {
     pos = col;
-    buf[0] = 0;
     ucol();
     BEGIN str;
 }
@@ -363,19 +367,22 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
     BEGIN str;
 }
 <str>{str_delim}    {
-    ucol();
-    BEGIN 0;
     if (!error){
 
         if (print) {
             printf("STRLIT(\"%s\")\n",buf);
         }
-        rbuf();
         slast(Strlit);
         yylval.strval = (char *) strdup(buf);
-        error = false;
-        if (!print) return STRLIT;
     }
+    rbuf();
+    ucol();
+    BEGIN 0;
+    if (!print && !error) {
+        error = false;
+        return STRLIT;
+    }
+    error = false;
 }
 <str>"\n" {
     printf("Line %d, column %d: unterminated string literal\n", line, pos);
@@ -402,7 +409,7 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
     if (print) printf("REALLIT(%s)\n", yytext);
     slast(Reallit);
     ucol();
-    yylval.realval = atof(yytext);
+    yylval.strval = strdup(yytext);
     if (!print) return REALLIT;
 }
 {id}    {
@@ -454,12 +461,13 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
 }
 
 <<EOF>> {
+    line--;
+    col = prev_col;
     if(last_token != Other){
         if (print) printf("SEMICOLON\n");
         rlast();
         if (!print) return SEMICOLON;
     }
-    uline();
     return 0;
 }
 

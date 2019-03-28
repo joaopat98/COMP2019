@@ -71,3 +71,5 @@ src/y\.tab\.c
 src/y\.tab\.h
 
 src/y\.output
+
+y\.tab\.h
