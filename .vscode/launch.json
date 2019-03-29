@@ -10,8 +10,9 @@
             "request": "launch",
             "program": "${workspaceFolder}/.bin/main",
             "args": [
+                "-t",
                 "<",
-                "examples/expr_test.dgo"
+                "Comp2019/meta2/sum.dgo"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

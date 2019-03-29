@@ -109,7 +109,6 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
     if (print) printf("RESERVED(%s)\n", yytext);
     rlast();
     ucol();
-    yylval.strval = (char *) strdup(yytext);
     if (!print) return RESERVED;
 }
 {string}   {
@@ -373,7 +372,7 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
             printf("STRLIT(\"%s\")\n",buf);
         }
         slast(Strlit);
-        yylval.strval = (char *) strdup(buf);
+        yylval.val = (char *) strdup(buf);
     }
     rbuf();
     ucol();
@@ -402,21 +401,21 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
     if (print) printf("INTLIT(%s)\n", yytext);
     slast(Intlit);
     ucol();
-    yylval.intval = atoi(yytext);
+    yylval.val = (char *) strdup(yytext);
     if (!print) return INTLIT;
 }
 {real_lit}   {
     if (print) printf("REALLIT(%s)\n", yytext);
     slast(Reallit);
     ucol();
-    yylval.strval = strdup(yytext);
+    yylval.val = (char *) strdup(yytext);
     if (!print) return REALLIT;
 }
 {id}    {
     if (print) printf("ID(%s)\n", yytext);
     slast(Id);
     ucol();
-    yylval.strval = (char *) strdup(yytext);
+    yylval.val = (char *) strdup(yytext);
     if (!print) return ID;
 }
 
