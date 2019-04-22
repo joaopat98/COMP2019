@@ -3,6 +3,9 @@
     #include <string.h>
     #include <stdlib.h>
     #include <stdbool.h>
+    #include "nodes.h"
+    #include "token.h"
+
     int yylex(void);
     void yyerror (const char *s);
     int line, col, yyleng;
@@ -10,201 +13,48 @@
     int pos;
     extern bool is_string;
 
-    typedef enum {
-        Program,
-        VarDecl,
-        FuncDecl,
-        FuncHeader,
-        FuncParams,
-        FuncBody,
-        ParamDecl,
-        Block,
-        If,
-        For,
-        Return,
-        Call,
-        Print,
-        ParseArgs,
-        Or,
-        And,
-        Eq,
-        Ne,
-        Lt,
-        Gt,
-        Le,
-        Ge,
-        Add,
-        Sub,
-        Mul,
-        Div,
-        Mod,
-        Not,
-        Minus,
-        Plus,
-        Assign,
-        Int,
-        Float32,
-        Bool,
-        String,
-        IntLit,
-        RealLit,
-        Id,
-        StrLit
-    } node_type;
-
-    typedef struct node Node;
-
-    typedef struct node{
-        node_type type;
-        char* val;
-        Node *next;
-        Node *children;
-    } node_t;
-
-    Node *new_node(int type, char *val) {
-        Node *n = (Node *) malloc(sizeof(Node));
-        n->children = NULL;
-        n->next = NULL;
-        n->type = (node_type) type;
-        n->val = strdup(val);
-        return n;
-    }
-
-
-    Node *new_empty_node(int type) {
-        Node *n = (Node *) malloc(sizeof(Node));
-        n->children = NULL;
-        n->next = NULL;
-        n->type = (node_type) type;
-        n->val = NULL;
-        return n;
-    }
-
-    void append_child(void *parent, void *child) {
-        Node *ptr =  ((Node *) parent)->children;
-        if (ptr == NULL)
-            ((Node *) parent)->children = (Node *) child;
-        else {
-            while (ptr->next != NULL) ptr = ptr->next;
-            ptr->next = (Node *) child;
-        }
-    }
-    void unshift_child(void *parent, void *child) {
-        ((Node *) child)->next = ((Node *) parent)->children;
-        ((Node *) parent)->children = (Node *) child;
-    }
-    
-    void add_neighbour(void *child, void *new_child) {
-        Node *ptr = (Node *) child;
-        while (ptr->next != NULL) ptr = ptr->next;
-        ptr->next = (Node *) new_child;
-    }
-
-    int count(void *n) {
-        int i = 0;
-        for(Node *ptr = (Node *) n; ptr != NULL; ptr = ptr->next){
-            i++;
-        }
-        return i;
-    }
-
-    void print_tree(Node *n, int level, bool to_print) {
-        if (n != NULL) {
-            if (to_print) {
-                for (int i = 0; i < level; i++)
-                    printf("..");
-                switch(n->type) {
-                    case Program: printf("Program"); break;
-                    case VarDecl: printf("VarDecl"); break; 
-                    case FuncDecl: printf("FuncDecl"); break; 
-                    case FuncHeader: printf("FuncHeader"); break; 
-                    case FuncParams: printf("FuncParams"); break; 
-                    case FuncBody: printf("FuncBody"); break; 
-                    case ParamDecl: printf("ParamDecl"); break; 
-                    case Block: printf("Block"); break; 
-                    case If: printf("If"); break; 
-                    case For: printf("For"); break; 
-                    case Return: printf("Return"); break; 
-                    case Call: printf("Call"); break; 
-                    case Print: printf("Print"); break; 
-                    case ParseArgs: printf("ParseArgs"); break; 
-                    case Or: printf("Or"); break; 
-                    case And: printf("And"); break; 
-                    case Eq: printf("Eq"); break; 
-                    case Ne: printf("Ne"); break; 
-                    case Lt: printf("Lt"); break; 
-                    case Gt: printf("Gt"); break; 
-                    case Le: printf("Le"); break; 
-                    case Ge: printf("Ge"); break; 
-                    case Add: printf("Add"); break; 
-                    case Sub: printf("Sub"); break; 
-                    case Mul: printf("Mul"); break; 
-                    case Div: printf("Div"); break; 
-                    case Mod: printf("Mod"); break; 
-                    case Not: printf("Not"); break; 
-                    case Minus: printf("Minus"); break; 
-                    case Plus: printf("Plus"); break; 
-                    case Assign: printf("Assign"); break; 
-                    case Int: printf("Int"); break; 
-                    case Float32: printf("Float32"); break; 
-                    case Bool: printf("Bool"); break; 
-                    case String: printf("String"); break; 
-                    case IntLit: printf("IntLit(%s)", n->val); break; 
-                    case RealLit: printf("RealLit(%s)", n->val); break; 
-                    case Id: printf("Id(%s)", n->val); break; 
-                    case StrLit: printf("StrLit(\"%s\")", n->val); break;
-                }
-                printf("\n");
-            }
-            print_tree(n->children, level + 1, to_print);
-            print_tree(n->next, level, to_print);
-            free(n->val);
-            free(n);
-        }
-    }
-
     Node *root_node;
 
 %}
 
 %union {
-    char *val;
-    void *nodeval;
+    tokeninfo token;
+    Node *nodeval;
     int typeval;
 }
 
-%token <val> ID
-%token <val> INTLIT
-%token <val> REALLIT
-%token <val> STRLIT
-%token SEMICOLON
-%token BLANKID
-%token PACKAGE
-%token RETURN
-%token AND OR
-%token ASSIGN
-%token COMMA
-%token EQ NE GE GT LE LT
-%token LPAR RPAR LBRACE RBRACE LSQ RSQ
-%token MINUS PLUS STAR DIV MOD
-%token NOT
-%token IF ELSE FOR
-%token VAR
-%token INT
-%token FLOAT32
-%token BOOL
-%token STRING
-%token PRINT
-%token PARSEINT
-%token FUNC
-%token CMDARGS
-%token RESERVED
-%token IMPORTANT
+%token <token> ID
+%token <token> INTLIT
+%token <token> REALLIT
+%token <token> STRLIT
+%token <token> SEMICOLON
+%token <token> BLANKID
+%token <token> PACKAGE
+%token <token> RETURN
+%token <token> AND OR
+%token <token> ASSIGN
+%token <token> COMMA
+%token <token> EQ NE GE GT LE LT
+%token <token> LPAR RPAR LBRACE RBRACE LSQ RSQ
+%token <token> MINUS PLUS STAR DIV MOD
+%token <token> NOT
+%token <token> IF ELSE FOR
+%token <token> VAR
+%token <token> INT
+%token <token> FLOAT32
+%token <token> BOOL
+%token <token> STRING
+%token <token> PRINT
+%token <token> PARSEINT
+%token <token> FUNC
+%token <token> CMDARGS
+%token <token> RESERVED
+%token <token> IMPORTANT
 
 %type <nodeval> Declarations
 %type <nodeval> VarDeclaration
 %type <nodeval> MultiId
-%type <typeval> Type 
+%type <nodeval> Type 
 %type <nodeval> FuncDeclaration
 %type <nodeval> Parameters
 %type <nodeval> MultiParam
@@ -251,7 +101,7 @@ VarDeclaration: VAR ID MultiId Type {
     add_neighbour($$, $3);
     Node *ptr = $$;
     while (ptr != NULL) {
-        unshift_child(ptr, new_empty_node($4));
+        unshift_child(ptr, $4);
         ptr = ptr->next;
     }
 }
@@ -261,7 +111,7 @@ VarDeclaration: VAR ID MultiId Type {
     add_neighbour($$, $4);
     Node *ptr = $$;
     while (ptr != NULL) {
-        unshift_child(ptr, new_empty_node($5));
+        unshift_child(ptr, $5);
         ptr = ptr->next;
     }
 };
@@ -273,15 +123,15 @@ MultiId: COMMA ID MultiId {
 | %empty {
     $$ = NULL;
 };
-Type: INT   {$$ = Int;}
-| FLOAT32   {$$ = Float32;}
-| BOOL  {$$ = Bool;} 
-| STRING    {$$ = String;};
+Type: INT   {$$ = new_node(Int,$1);}
+| FLOAT32   {$$ = new_node(Float32,$1);}
+| BOOL  {$$ = new_node(Bool,$1);} 
+| STRING    {$$ = new_node(String,$1);};
 FuncDeclaration: FUNC ID LPAR Parameters RPAR Type FuncBody {
     $$ = new_empty_node(FuncDecl);
     Node *funcheader = new_empty_node(FuncHeader);
     append_child(funcheader, new_node(Id, $2));
-    append_child(funcheader, new_empty_node($6));
+    append_child(funcheader, $6);
     Node *funcparams = new_empty_node(FuncParams);
     append_child(funcparams, $4);
     append_child(funcheader, funcparams);
@@ -292,7 +142,7 @@ FuncDeclaration: FUNC ID LPAR Parameters RPAR Type FuncBody {
     $$ = new_empty_node(FuncDecl);
     Node *funcheader = new_empty_node(FuncHeader);
     append_child(funcheader, new_node(Id, $2));
-    append_child(funcheader, new_empty_node($5));
+    append_child(funcheader, $5);
     append_child(funcheader, new_empty_node(FuncParams));
     append_child($$, funcheader);
     append_child($$, $6);
@@ -317,13 +167,13 @@ FuncDeclaration: FUNC ID LPAR Parameters RPAR Type FuncBody {
 };
 Parameters: ID Type MultiParam {
     $$ = new_empty_node(ParamDecl);
-    append_child($$, new_empty_node($2));
+    append_child($$, $2);
     append_child($$, new_node(Id,$1));
     add_neighbour($$, $3);
 };
 MultiParam: COMMA ID Type MultiParam {
     $$ = new_empty_node(ParamDecl);
-    append_child($$, new_empty_node($3));
+    append_child($$, $3);
     append_child($$, new_node(Id,$2));
     add_neighbour($$, $4);
 }
@@ -357,7 +207,7 @@ VarsAndStatements: VarsAndStatements SEMICOLON {
     $$ = NULL;
 };
 Statement: ID ASSIGN Expr {
-    $$ = new_empty_node(Assign);
+    $$ = new_node(Assign, $2);
     append_child($$, new_node(Id, $1));
     append_child($$, $3);
 }
@@ -477,80 +327,80 @@ MultiFuncArgs: COMMA Expr MultiFuncArgs {
     $$ = NULL;
 };
 Expr: Expr OR Expr {
-    $$ = new_empty_node(Or);
+    $$ = new_node(Or, $2);
     append_child($$,$1);
     append_child($$,$3);
 }
 | Expr AND Expr {
-    $$ = new_empty_node(And);
+    $$ = new_node(And, $2);
     append_child($$,$1);
     append_child($$,$3);
 }
 | Expr LT Expr {
-    $$ = new_empty_node(Lt);
+    $$ = new_node(Lt, $2);
     append_child($$,$1);
     append_child($$,$3);
 }
 | Expr GT Expr {
-    $$ = new_empty_node(Gt);
+    $$ = new_node(Gt, $2);
     append_child($$,$1);
     append_child($$,$3);
 }
 | Expr EQ Expr {
-    $$ = new_empty_node(Eq);
+    $$ = new_node(Eq, $2);
     append_child($$,$1);
     append_child($$,$3);
 }
 | Expr NE Expr {
-    $$ = new_empty_node(Ne);
+    $$ = new_node(Ne, $2);
     append_child($$,$1);
     append_child($$,$3);
 }
 | Expr LE Expr {
-    $$ = new_empty_node(Le);
+    $$ = new_node(Le, $2);
     append_child($$,$1);
     append_child($$,$3);
 }
 | Expr GE Expr {
-    $$ = new_empty_node(Ge);
+    $$ = new_node(Ge, $2);
     append_child($$,$1);
     append_child($$,$3);
 }
 | Expr PLUS Expr {
-    $$ = new_empty_node(Add);
+    $$ = new_node(Add, $2);
     append_child($$,$1);
     append_child($$,$3);
 }
 | Expr MINUS Expr {
-    $$ = new_empty_node(Sub);
+    $$ = new_node(Sub, $2);
     append_child($$,$1);
     append_child($$,$3);
 }
 | Expr STAR Expr {
-    $$ = new_empty_node(Mul);
+    $$ = new_node(Mul, $2);
     append_child($$,$1);
     append_child($$,$3);
 }
 | Expr DIV Expr {
-    $$ = new_empty_node(Div);
+    $$ = new_node(Div, $2);
     append_child($$,$1);
     append_child($$,$3);
 }
 | Expr MOD Expr {
-    $$ = new_empty_node(Mod);
+    $$ = new_node(Mod, $2);
     append_child($$,$1);
     append_child($$,$3);
 }
 | NOT Expr %prec IMPORTANT  {
-    $$ = new_empty_node(Not);
+    $$ = new_node(Not, $1);
     append_child($$,$2);
 }
 | MINUS Expr %prec IMPORTANT {
-    $$ = new_empty_node(Minus);
+    $$ = new_node(Minus, $1);
     append_child($$,$2);
 }
 | PLUS Expr %prec IMPORTANT {
-    $$ = new_empty_node(Plus);
+    $$ = new_node(Plus, $1);
     append_child($$,$2);
 }
 | INTLIT {
@@ -576,7 +426,7 @@ Expr: Expr OR Expr {
 
 void  yyerror (const char *s) {
     if (is_string) {
-        printf ("Line %d, column %d: %s: \"%s\"\n", line, pos, s, yylval.val);
+        printf ("Line %d, column %d: %s: \"%s\"\n", line, pos, s, yylval.token.val);
     } else {
         printf ("Line %d, column %d: %s: %s\n", line, col - (int) strlen(yytext), s, yytext);
     }
