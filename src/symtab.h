@@ -1,18 +1,10 @@
 #include "nodes.h"
 #include "stdlib.h"
 #include "stdio.h"
+#include "sym_types.h"
 
 #ifndef SYMTAB_H
 #define SYMTAB_H 1
-
-typedef enum
-{
-    integer_type,
-    float32_type,
-    bool_type,
-    string_type,
-    none
-} sym_type;
 
 typedef struct type_node TypeNode;
 

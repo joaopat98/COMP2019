@@ -449,6 +449,7 @@ int main(int argc, char **argv) {
         yyparse();
         global = new_scope("global", false, none, NULL);
         parse_node(root_node, global, global);
+        print_errors(root_node);
         print_scopes(global);
         print_tree(root_node,0,true);
     } else {

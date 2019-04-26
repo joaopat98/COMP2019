@@ -1,9 +1,10 @@
 #include "symtab.h"
 #include "nodes.h"
+#include "string.h"
 
 #ifndef SEMANTICS_H
 #define SEMANTICS_H 1
 
-void parse_node(Node *n, Scope *scope, Scope *global);
+bool parse_node(Node *n, Scope *local, Scope *global);
 
 #endif

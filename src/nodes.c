@@ -6,6 +6,8 @@ Node *new_node(int type, tokeninfo token)
     n->children = NULL;
     n->next = NULL;
     n->type = (node_type)type;
+    n->symbol_type = -1;
+    n->error[0] = '\0';
     n->val = token.val;
     n->line = token.line;
     n->col = token.col;
@@ -18,6 +20,7 @@ Node *new_empty_node(int type)
     n->children = NULL;
     n->next = NULL;
     n->type = (node_type)type;
+    n->error[0] = '\0';
     n->val = NULL;
     n->line = -1;
     n->col = -1;
@@ -68,6 +71,17 @@ Node *get_child(Node *n, node_type type)
             return ptr;
     }
     return NULL;
+}
+
+void print_errors(Node *n)
+{
+    if (n != NULL)
+    {
+        if (strlen(n->error) > 0)
+            printf("Line %d, column %d: %s", n->line, n->col, n->error);
+        print_errors(n->children);
+        print_errors(n->next);
+    }
 }
 
 void print_tree(Node *n, int level, bool to_print)

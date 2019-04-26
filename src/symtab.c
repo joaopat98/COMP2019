@@ -29,11 +29,14 @@ Symbol *add_sym(Scope *scope, Symbol *symbol)
     }
     else
     {
-        Symbol *ptr;
-        for (ptr = scope->symbols; ptr->next != NULL; ptr = ptr->next)
+        Symbol *ptr = scope->symbols;
+        while (true)
         {
             if (!strcmp(ptr->name, symbol->name))
                 return ptr;
+            if (ptr->next == NULL)
+                break;
+            ptr = ptr->next;
         }
         ptr->next = symbol;
     }

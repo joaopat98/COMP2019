@@ -1,18 +1,26 @@
 #include "semantics.h"
 
-void parse_node(Node *n, Scope *scope, Scope *global)
+bool parse_node(Node *n, Scope *local, Scope *global)
 {
+    bool error = false;
     switch (n->type)
     {
     case Program:
         for (Node *ptr = n->children; ptr != NULL; ptr = ptr->next)
         {
-            parse_node(ptr, scope, global);
+            error = error || parse_node(ptr, local, global);
         }
         break;
     case VarDecl:
-        add_sym(scope, new_symbol(get_node_type(n->children), n->children->next->val, n->children->next));
-        break;
+    {
+        Node *id_node = n->children->next;
+        if (add_sym(local, new_symbol(get_node_type(n->children), id_node->val, id_node)) != NULL)
+        {
+            sprintf(id_node->error, "Symbol %s already defined\n", id_node->val);
+            error = true;
+        }
+    }
+    break;
     case FuncDecl:
     {
         Node *header = n->children;
@@ -31,11 +39,12 @@ void parse_node(Node *n, Scope *scope, Scope *global)
         add_scope(global, func_scope);
         for (Node *ptr = body->children; ptr != NULL; ptr = ptr->next)
         {
-            parse_node(ptr, func_scope, global);
+            error = error || parse_node(ptr, func_scope, global);
         }
-        break;
     }
+    break;
     default:
         break;
     }
+    return error;
 }

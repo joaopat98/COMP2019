@@ -1,4 +1,5 @@
 #include "token.h"
+#include "sym_types.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -57,7 +58,9 @@ typedef struct node
     int line;
     int col;
     node_type type;
+    sym_type symbol_type;
     char *val;
+    char error[500];
     Node *next;
     Node *children;
 } node_t;
@@ -75,6 +78,8 @@ void add_neighbour(Node *child, Node *new_child);
 int count(Node *n);
 
 Node *get_child(Node *n, node_type type);
+
+void print_errors(Node *n);
 
 void print_tree(Node *n, int level, bool to_print);
 
