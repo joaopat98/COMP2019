@@ -10,9 +10,9 @@
             "request": "launch",
             "program": "${workspaceFolder}/.bin/main",
             "args": [
-                "-t",
+                "-s",
                 "<",
-                "Comp2019/meta2/sum.dgo"
+                "Comp2019/meta3/factorial.dgo"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

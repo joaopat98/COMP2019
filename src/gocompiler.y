@@ -5,6 +5,8 @@
     #include <stdbool.h>
     #include "nodes.h"
     #include "token.h"
+    #include "symtab.h"
+    #include "semantics.h"
 
     int yylex(void);
     void yyerror (const char *s);
@@ -14,6 +16,7 @@
     extern bool is_string;
 
     Node *root_node;
+    Scope *global;
 
 %}
 
@@ -441,6 +444,12 @@ int main(int argc, char **argv) {
         return 0;
     } else if(argc >= 2 && strcmp(argv[1],"-t")==0) {
         yyparse();
+        print_tree(root_node,0,true);
+    } else if(argc >= 2 && strcmp(argv[1],"-s")==0) {
+        yyparse();
+        global = new_scope("global", false, none, NULL);
+        parse_node(root_node, global, global);
+        print_scopes(global);
         print_tree(root_node,0,true);
     } else {
         yyparse();

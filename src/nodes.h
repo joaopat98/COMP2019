@@ -74,6 +74,8 @@ void add_neighbour(Node *child, Node *new_child);
 
 int count(Node *n);
 
+Node *get_child(Node *n, node_type type);
+
 void print_tree(Node *n, int level, bool to_print);
 
 #endif

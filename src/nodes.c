@@ -60,6 +60,16 @@ int count(Node *n)
     return i;
 }
 
+Node *get_child(Node *n, node_type type)
+{
+    for (Node *ptr = n->children; ptr != NULL; ptr = ptr->next)
+    {
+        if (ptr->type == type)
+            return ptr;
+    }
+    return NULL;
+}
+
 void print_tree(Node *n, int level, bool to_print)
 {
     if (n != NULL)
@@ -188,7 +198,7 @@ void print_tree(Node *n, int level, bool to_print)
                 printf("StrLit(\"%s\")", n->val);
                 break;
             }
-            printf(" - l. %d, c. %d\n", n->line, n->col);
+            printf("\n");
         }
         print_tree(n->children, level + 1, to_print);
         print_tree(n->next, level, to_print);
