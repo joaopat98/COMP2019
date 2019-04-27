@@ -60,7 +60,7 @@ typedef struct node
     node_type type;
     sym_type symbol_type;
     char *val;
-    char error[500];
+    char error[1];
     Node *next;
     Node *children;
 } node_t;

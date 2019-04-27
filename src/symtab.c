@@ -113,30 +113,28 @@ sym_type get_node_type(Node *n)
     case String:
         return string_type;
     default:
-        return none;
+        return undef;
     }
 }
 
-void print_type(sym_type type)
+const char *type_str(sym_type type)
 {
     switch (type)
     {
     case integer_type:
-        printf("int");
+        return "int";
         break;
     case float32_type:
-        printf("float32");
+        return "float32";
         break;
     case bool_type:
-        printf("bool");
+        return "bool";
         break;
     case string_type:
-        printf("string");
+        return "string";
         break;
-    case none:
-        printf("none");
-        break;
-    default:
+    case undef:
+        return "undef";
         break;
     }
 }
@@ -149,17 +147,14 @@ void print_scope(Scope *scope)
         TypeNode *param = scope->ref_sym->params;
         if (param != NULL)
         {
-            print_type(param->type);
+            printf("%s", type_str(param->type));
             for (param = param->next; param != NULL; param = param->next)
             {
-                printf(", ");
-                print_type(param->type);
+                printf(", %s", type_str(param->type));
             }
         }
         printf(") Symbol Table =====\n");
-        printf("return\t");
-        print_type(scope->return_type);
-        printf("\n");
+        printf("return\t%s\n", type_str(scope->return_type));
     }
     else
     {
@@ -176,17 +171,15 @@ void print_scope(Scope *scope)
             printf("(");
             if (param != NULL)
             {
-                print_type(param->type);
+                printf("%s", type_str(param->type));
                 for (param = param->next; param != NULL; param = param->next)
                 {
-                    printf(", ");
-                    print_type(param->type);
+                    printf(", %s", type_str(param->type));
                 }
             }
             printf(")");
         }
-        printf("\t");
-        print_type(s->type);
+        printf("\t%s", type_str(s->type));
         if (i < scope->num_params)
             printf("\tparam\n");
         else

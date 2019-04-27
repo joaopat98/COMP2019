@@ -58,6 +58,8 @@ Symbol *get_symbol(Scope *scope, char *name);
 
 sym_type get_node_type(Node *n);
 
+const char *type_str(sym_type type);
+
 void print_scopes(Scope *scope);
 
 #endif

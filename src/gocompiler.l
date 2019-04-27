@@ -56,10 +56,10 @@
         yylval.token.val = (char *)strdup(val);
     }
 
-    void save_empty_token(){
+    void save_auto_token(){
         yylval.token.line = line;
         yylval.token.col = col;
-        yylval.token.val = NULL;
+        yylval.token.val = (char *)strdup(yytext);
     }
 %}
 %X str seq comment multi_comment
@@ -122,273 +122,273 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
 {reserved}  {
     if (print) printf("RESERVED(%s)\n", yytext);
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return RESERVED;
 }
 {string}   {
     if (print) printf("STRING\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return STRING;
 }
 {bool}   {
     if (print) printf("BOOL\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return BOOL;
 }
 {float32}   {
     if (print) printf("FLOAT32\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return FLOAT32;
 }
 {or}   {
     if (print) printf("OR\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return OR;
 }
 {not}   {
     if (print) printf("NOT\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return NOT;
 }
 {ne}   {
     if (print) printf("NE\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return NE;
 }
 {mod}   {
     if (print) printf("MOD\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return MOD;
 }
 {le}   {
     if (print) printf("LE\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return LE;
 }
 {lt}   {
     if (print) printf("LT\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return LT;
 }
 {ge}   {
     if (print) printf("GE\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return GE;
 }
 {gt}   {
     if (print) printf("GT\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return GT;
 }
 {div}   {
     if (print) printf("DIV\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return DIV;
 }
 {and}   {
     if (print) printf("AND\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return AND;
 }
 {package}   {
     if (print) printf("PACKAGE\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return PACKAGE;
 }
 {func}   {
     if (print) printf("FUNC\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return FUNC;
 }
 {else}  {
     if (print) printf("ELSE\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return ELSE;
 }
 {l_par}   {
     if (print) printf("LPAR\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return LPAR;
 }
 {r_par}   {
     if (print) printf("RPAR\n");
     slast(Rpar_tok);
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return RPAR;
 }
 {int}   {
     if (print) printf("INT\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return INT;
 }
 {l_brace}   {
     if (print) printf("LBRACE\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return LBRACE;
 }
 {r_brace}   {
     if (print) printf("RBRACE\n");
     slast(Rbrace_tok);
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return RBRACE;
 }
 {if}   {
     if (print) printf("IF\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return IF;
 }
 {eq}   {
     if (print) printf("EQ\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return EQ;
 }
 {for}   {
     if (print) printf("FOR\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return FOR;
 }
 {plus}  {
     if (print) printf("PLUS\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return PLUS;
 }
 {return}   {
     if (print) printf("RETURN\n");
     slast(Return_tok);
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return RETURN;
 }
 {semicolon}   {
     if (print) printf("SEMICOLON\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return SEMICOLON;
 }
 {star}   {
     if (print) printf("STAR\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return STAR;
 }
 {minus} {
     if (print) printf("MINUS\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return MINUS;
 }
 {blank_id}  {
     if (print) printf("BLANKID\n");
     slast(Id_tok);
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return BLANKID;
 }
 {assign}  {
     if (print) printf("ASSIGN\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return ASSIGN;
 }
 {lsq}  {
     if (print) printf("LSQ\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return LSQ;
 }
 {rsq}  {
     if (print) printf("RSQ\n");
     slast(Rsq_tok);
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return RSQ;
 }
 {var}   {
     if (print) printf("VAR\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return VAR;
 }
 {comma}   {
     if (print) printf("COMMA\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return COMMA;
 }
 {parse_int}   {
     if (print) printf("PARSEINT\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return PARSEINT;
 }
 {cmdargs}   {
     if (print) printf("CMDARGS\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return CMDARGS;
 }
 {print}   {
     if (print) printf("PRINT\n");
     rlast();
-    save_empty_token();
+    save_auto_token();
     ucol();
     if (!print) return PRINT;
 }
@@ -491,7 +491,7 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
     if(last_token != Other_tok){
         if (print) printf("SEMICOLON\n");
         rlast();
-        save_empty_token();
+        save_auto_token();
         if (!print) return SEMICOLON;
     }
 }
@@ -519,7 +519,7 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
     if(last_token != Other_tok){
         if (print) printf("SEMICOLON\n");
         rlast();
-        save_empty_token();
+        save_auto_token();
         if (!print) return SEMICOLON;
     }
     return 0;
@@ -535,7 +535,7 @@ reserved    "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthro
     if(last_token != Other_tok){
         if (print) printf("SEMICOLON\n");
         rlast();
-        save_empty_token();
+        save_auto_token();
         if (!print) return SEMICOLON;
     }
 }

@@ -447,11 +447,13 @@ int main(int argc, char **argv) {
         print_tree(root_node,0,true);
     } else if(argc >= 2 && strcmp(argv[1],"-s")==0) {
         yyparse();
-        global = new_scope("global", false, none, NULL);
-        parse_node(root_node, global, global);
-        print_errors(root_node);
-        print_scopes(global);
-        print_tree(root_node,0,true);
+        global = new_scope("global", false, undef, NULL);
+        if(parse_node(root_node, global, global))
+            print_errors(root_node);
+        else {
+            print_scopes(global);
+            print_tree(root_node,0,true);
+        }
     } else {
         yyparse();
         print_tree(root_node,0,false);
