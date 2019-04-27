@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/.bin/main",
             "args": [
-                "-t",
+                "-s",
                 "<",
                 "Comp2019/meta3/errors.dgo"
             ],

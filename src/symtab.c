@@ -95,7 +95,10 @@ Symbol *get_symbol(Scope *scope, char *name)
     for (ptr = scope->symbols; ptr != NULL; ptr = ptr->next)
     {
         if (!strcmp(ptr->name, name))
+        {
+            ptr->was_used = true;
             return ptr;
+        }
     }
     return NULL;
 }

@@ -23,7 +23,7 @@
 %union {
     tokeninfo token;
     Node *nodeval;
-    int typeval;
+    node_type typeval;
 }
 
 %token <token> ID
@@ -57,7 +57,7 @@
 %type <nodeval> Declarations
 %type <nodeval> VarDeclaration
 %type <nodeval> MultiId
-%type <nodeval> Type 
+%type <typeval> Type 
 %type <nodeval> FuncDeclaration
 %type <nodeval> Parameters
 %type <nodeval> MultiParam
@@ -104,7 +104,7 @@ VarDeclaration: VAR ID MultiId Type {
     add_neighbour($$, $3);
     Node *ptr = $$;
     while (ptr != NULL) {
-        unshift_child(ptr, $4);
+        unshift_child(ptr, new_empty_node($4));
         ptr = ptr->next;
     }
 }
@@ -114,7 +114,7 @@ VarDeclaration: VAR ID MultiId Type {
     add_neighbour($$, $4);
     Node *ptr = $$;
     while (ptr != NULL) {
-        unshift_child(ptr, $5);
+        unshift_child(ptr, new_empty_node($5));
         ptr = ptr->next;
     }
 };
@@ -126,15 +126,15 @@ MultiId: COMMA ID MultiId {
 | %empty {
     $$ = NULL;
 };
-Type: INT   {$$ = new_node(Int,$1);}
-| FLOAT32   {$$ = new_node(Float32,$1);}
-| BOOL  {$$ = new_node(Bool,$1);} 
-| STRING    {$$ = new_node(String,$1);};
+Type: INT   {$$ = Int;}
+| FLOAT32   {$$ = Float32;}
+| BOOL  {$$ = Bool;} 
+| STRING    {$$ = String;};
 FuncDeclaration: FUNC ID LPAR Parameters RPAR Type FuncBody {
     $$ = new_empty_node(FuncDecl);
     Node *funcheader = new_empty_node(FuncHeader);
     append_child(funcheader, new_node(Id, $2));
-    append_child(funcheader, $6);
+    append_child(funcheader, new_empty_node($6));
     Node *funcparams = new_empty_node(FuncParams);
     append_child(funcparams, $4);
     append_child(funcheader, funcparams);
@@ -145,7 +145,7 @@ FuncDeclaration: FUNC ID LPAR Parameters RPAR Type FuncBody {
     $$ = new_empty_node(FuncDecl);
     Node *funcheader = new_empty_node(FuncHeader);
     append_child(funcheader, new_node(Id, $2));
-    append_child(funcheader, $5);
+    append_child(funcheader, new_empty_node($5));
     append_child(funcheader, new_empty_node(FuncParams));
     append_child($$, funcheader);
     append_child($$, $6);
@@ -170,13 +170,13 @@ FuncDeclaration: FUNC ID LPAR Parameters RPAR Type FuncBody {
 };
 Parameters: ID Type MultiParam {
     $$ = new_empty_node(ParamDecl);
-    append_child($$, $2);
+    append_child($$, new_empty_node($2));
     append_child($$, new_node(Id,$1));
     add_neighbour($$, $3);
 };
 MultiParam: COMMA ID Type MultiParam {
     $$ = new_empty_node(ParamDecl);
-    append_child($$, $3);
+    append_child($$, new_empty_node($3));
     append_child($$, new_node(Id,$2));
     add_neighbour($$, $4);
 }
