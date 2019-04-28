@@ -128,29 +128,19 @@ bool parse_expr(Node *n, Scope *local, Scope *global)
     break;
     case Call:
     {
-        Symbol *func_sym = get_symbol(global, n->children->val);
         Node *call_param;
         for (call_param = n->children->next; call_param != NULL; call_param = call_param->next)
         {
             error = parse_expr(call_param, local, global) || error;
         }
+        Symbol *func_sym = get_func(global, n->children->val, n->children->next);
         error = error || func_sym == NULL || !(func_sym->is_func);
         if (!error)
         {
-            TypeNode *func_param = func_sym->params;
-            call_param = n->children->next;
-            while (func_param != NULL && call_param != NULL)
-            {
-                if (func_param == NULL || call_param == NULL || func_param->type != call_param->symbol_type)
-                {
-                    error = true;
-                    break;
-                }
-                func_param = func_param->next;
-                call_param = call_param->next;
-            }
+            n->children->symbol = func_sym;
+            n->symbol_type = func_sym->type;
         }
-        if (error)
+        else
         {
             call_param = n->children->next;
             sprintf(n->children->error, "Cannot find symbol %s(", n->children->val);
@@ -166,11 +156,6 @@ bool parse_expr(Node *n, Scope *local, Scope *global)
             n->symbol_type = undef;
             break;
         }
-        else
-        {
-            n->children->symbol = func_sym;
-            n->symbol_type = func_sym->type;
-        }
     }
     break;
     default:
@@ -183,7 +168,7 @@ bool parse_node(Node *n, Scope *local, Scope *global)
 {
     bool error = false;
     Node *id_node, *header, *body;
-    Symbol *func, *id_sym;
+    Symbol *func;
     Scope *func_scope;
     switch (n->type)
     {
@@ -205,17 +190,17 @@ bool parse_node(Node *n, Scope *local, Scope *global)
         header = n->children;
         body = header->next;
         func = new_func(get_node_type(header->children->next), header->children->val, header->children);
-        if (add_sym(global, func) == NULL)
+        func_scope = new_scope(func->name, true, func->type, func);
+        for (Node *param = get_child(header, FuncParams)->children; param != NULL; param = param->next)
         {
-            func_scope = new_scope(func->name, true, func->type, func);
-            for (Node *param = get_child(header, FuncParams)->children; param != NULL; param = param->next)
+            Symbol *result = add_param(func_scope, new_symbol(get_node_type(param->children), param->children->next->val, param->children->next));
+            if (result == NULL)
             {
-                Symbol *result = add_param(func_scope, new_symbol(get_node_type(param->children), param->children->next->val, param->children->next));
-                if (result == NULL)
-                {
-                    add_func_param(func, get_node_type(param->children));
-                }
+                add_func_param(func, get_node_type(param->children));
             }
+        }
+        if (add_func(global, func) == NULL)
+        {
             add_scope(global, func_scope);
             for (Node *ptr = body->children; ptr != NULL; ptr = ptr->next)
             {
@@ -224,7 +209,18 @@ bool parse_node(Node *n, Scope *local, Scope *global)
         }
         else
         {
-            sprintf(header->children->error, "Symbol %s already defined\n", header->children->val);
+            sprintf(header->children->error, "Symbol %s(", header->children->val);
+            TypeNode *param = func->params;
+            if (param != NULL)
+            {
+                sprintf(header->children->error + strlen(header->children->error), "%s", type_str(param->type));
+                for (param = param->next; param != NULL; param = param->next)
+                {
+                    sprintf(header->children->error + strlen(header->children->error), ",%s", type_str(param->type));
+                }
+            }
+
+            sprintf(header->children->error + strlen(header->children->error), ") already defined\n");
             error = true;
         }
 
@@ -293,6 +289,17 @@ bool parse_node(Node *n, Scope *local, Scope *global)
         if (n->children != NULL)
         {
             error = parse_expr(n->children, local, global);
+        }
+        break;
+    case Print:
+        error = parse_expr(n->children, local, global);
+        break;
+    case ParseArgs:
+        n->symbol_type = integer_type;
+        error = parse_expr(n->children, local, global) || parse_expr(n->children->next, local, global);
+        if (n->children->symbol_type != integer_type)
+        {
+            sprintf(n->error, "Operator = cannot be applied to types %s, int\n", type_str(n->children->symbol_type));
         }
         break;
     case Or:

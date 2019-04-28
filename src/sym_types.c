@@ -12,6 +12,8 @@ const char *type_str(sym_type type)
         return "bool";
     case string_type:
         return "string";
+    case none:
+        return "none";
     case undef:
         return "undef";
     default:

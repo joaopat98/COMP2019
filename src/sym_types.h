@@ -7,6 +7,7 @@ typedef enum
     float32_type,
     bool_type,
     string_type,
+    none,
     undef,
     no_type
 } sym_type;

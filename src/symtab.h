@@ -25,6 +25,8 @@ Scope *new_scope(char *name, bool is_func, sym_type return_type, Symbol *ref_sym
 
 Symbol *add_sym(Scope *scope, Symbol *symbol);
 
+Symbol *add_func(Scope *scope, Symbol *func);
+
 Symbol *add_param(Scope *scope, Symbol *symbol);
 
 Symbol *new_symbol(sym_type type, char *name, Node *declaration);
@@ -34,6 +36,8 @@ Symbol *new_func(sym_type type, char *name, Node *declaration);
 void add_func_param(Symbol *symbol, sym_type param);
 
 Symbol *get_symbol(Scope *scope, char *name);
+
+Symbol *get_func(Scope *scope, char *name, Node *params);
 
 sym_type get_node_type(Node *n);
 

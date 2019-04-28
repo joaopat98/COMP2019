@@ -289,7 +289,7 @@ MultiStatement: Statement SEMICOLON MultiStatement {
     $$ = NULL;
 };
 ParseArgs: ID COMMA BLANKID ASSIGN PARSEINT LPAR CMDARGS LSQ Expr RSQ RPAR {
-    $$ = new_empty_node(ParseArgs);
+    $$ = new_node(ParseArgs, $4);
     append_child($$, new_node(Id, $1));
     append_child($$, $9);
 }
