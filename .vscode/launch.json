@@ -12,7 +12,7 @@
             "args": [
                 "-s",
                 "<",
-                "Comp2019/meta3/errors.dgo"
+                "Comp2019/meta3/factorial.dgo"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

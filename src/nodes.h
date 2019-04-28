@@ -1,12 +1,12 @@
+#ifndef NODES_H
+#define NODES_H 1
+
 #include "token.h"
 #include "sym_types.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
-
-#ifndef NODES_H
-#define NODES_H 1
 
 typedef enum
 {
@@ -52,6 +52,8 @@ typedef enum
 } node_type;
 
 typedef struct node Node;
+typedef struct type_node TypeNode;
+typedef struct sym Symbol;
 
 typedef struct node
 {
@@ -63,7 +65,25 @@ typedef struct node
     char error[500];
     Node *next;
     Node *children;
+    Symbol *symbol;
 } node_t;
+
+typedef struct type_node
+{
+    sym_type type;
+    TypeNode *next;
+} TypeNode;
+
+typedef struct sym
+{
+    sym_type type;
+    char name[100];
+    bool is_func;
+    bool was_used;
+    Node *declaration;
+    TypeNode *params;
+    Symbol *next;
+} sym_t;
 
 Node *new_node(int type, tokeninfo token);
 

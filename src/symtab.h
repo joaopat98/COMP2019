@@ -1,31 +1,10 @@
+#ifndef SYMTAB_H
+#define SYMTAB_H 1
+
 #include "nodes.h"
 #include "stdlib.h"
 #include "stdio.h"
 #include "sym_types.h"
-
-#ifndef SYMTAB_H
-#define SYMTAB_H 1
-
-typedef struct type_node TypeNode;
-
-typedef struct type_node
-{
-    sym_type type;
-    TypeNode *next;
-} TypeNode;
-
-typedef struct sym Symbol;
-
-typedef struct sym
-{
-    sym_type type;
-    char name[100];
-    bool is_func;
-    bool was_used;
-    Node *declaration;
-    TypeNode *params;
-    Symbol *next;
-} sym_t;
 
 typedef struct sc Scope;
 

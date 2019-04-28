@@ -120,28 +120,6 @@ sym_type get_node_type(Node *n)
     }
 }
 
-const char *type_str(sym_type type)
-{
-    switch (type)
-    {
-    case integer_type:
-        return "int";
-        break;
-    case float32_type:
-        return "float32";
-        break;
-    case bool_type:
-        return "bool";
-        break;
-    case string_type:
-        return "string";
-        break;
-    case undef:
-        return "undef";
-        break;
-    }
-}
-
 void print_scope(Scope *scope)
 {
     if (scope->is_func)
@@ -153,7 +131,7 @@ void print_scope(Scope *scope)
             printf("%s", type_str(param->type));
             for (param = param->next; param != NULL; param = param->next)
             {
-                printf(", %s", type_str(param->type));
+                printf(",%s", type_str(param->type));
             }
         }
         printf(") Symbol Table =====\n");
@@ -177,7 +155,7 @@ void print_scope(Scope *scope)
                 printf("%s", type_str(param->type));
                 for (param = param->next; param != NULL; param = param->next)
                 {
-                    printf(", %s", type_str(param->type));
+                    printf(",%s", type_str(param->type));
                 }
             }
             printf(")");

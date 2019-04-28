@@ -26,6 +26,16 @@ bool parse_expr(Node *n, Scope *local, Scope *global)
     case Gt:
     case Le:
     case Ge:
+        n->symbol_type = bool_type;
+        first = n->children;
+        second = n->children->next;
+        error = parse_expr(first, local, global) || parse_expr(second, local, global);
+        if (first->symbol_type == bool_type || second->symbol_type == bool_type || first->symbol_type != second->symbol_type)
+        {
+            error = true;
+            sprintf(n->error, "Operator %s cannot be applied to types %s, %s\n", n->val, type_str(first->symbol_type), type_str(second->symbol_type));
+        }
+        break;
     case Add:
     case Sub:
     case Mul:
@@ -60,20 +70,17 @@ bool parse_expr(Node *n, Scope *local, Scope *global)
         }
         break;
     case Not:
+        n->symbol_type = bool_type;
         error = parse_expr(n->children, local, global);
         if (n->children->symbol_type != bool_type)
         {
             error = true;
             sprintf(n->error, "Operator %s cannot be applied to type %s\n", n->val, type_str(n->children->symbol_type));
-            n->symbol_type = undef;
-        }
-        else
-        {
-            n->symbol_type = bool_type;
         }
         break;
     case Eq:
     case Ne:
+        n->symbol_type = bool_type;
         first = n->children;
         second = n->children->next;
         error = parse_expr(first, local, global) || parse_expr(second, local, global);
@@ -81,13 +88,7 @@ bool parse_expr(Node *n, Scope *local, Scope *global)
         {
             error = true;
             sprintf(n->error, "Operator %s cannot be applied to types %s, %s\n", n->val, type_str(first->symbol_type), type_str(second->symbol_type));
-            n->symbol_type = undef;
         }
-        else
-        {
-            n->symbol_type = bool_type;
-        }
-        break;
         break;
     case Minus:
     case Plus:
@@ -167,6 +168,7 @@ bool parse_expr(Node *n, Scope *local, Scope *global)
         }
         else
         {
+            n->children->symbol = func_sym;
             n->symbol_type = func_sym->type;
         }
     }
@@ -286,7 +288,12 @@ bool parse_node(Node *n, Scope *local, Scope *global)
                 error = parse_node(ptr, local, global) || error;
             }
         }
-
+        break;
+    case Return:
+        if (n->children != NULL)
+        {
+            error = parse_expr(n->children, local, global);
+        }
         break;
     case Or:
     case And:

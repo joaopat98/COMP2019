@@ -7,7 +7,10 @@ typedef enum
     float32_type,
     bool_type,
     string_type,
-    undef
+    undef,
+    no_type
 } sym_type;
+
+const char *type_str(sym_type type);
 
 #endif

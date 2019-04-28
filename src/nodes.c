@@ -5,8 +5,9 @@ Node *new_node(int type, tokeninfo token)
     Node *n = (Node *)malloc(sizeof(Node));
     n->children = NULL;
     n->next = NULL;
+    n->symbol = NULL;
     n->type = (node_type)type;
-    n->symbol_type = -1;
+    n->symbol_type = no_type;
     n->error[0] = '\0';
     n->val = token.val;
     n->line = token.line;
@@ -19,7 +20,9 @@ Node *new_empty_node(int type)
     Node *n = (Node *)malloc(sizeof(Node));
     n->children = NULL;
     n->next = NULL;
+    n->symbol = NULL;
     n->type = (node_type)type;
+    n->symbol_type = no_type;
     n->error[0] = '\0';
     n->val = NULL;
     n->line = -1;
@@ -212,6 +215,25 @@ void print_tree(Node *n, int level, bool to_print)
                 printf("StrLit(\"%s\")", n->val);
                 break;
             }
+            if (n->symbol_type != no_type)
+            {
+                printf(" - %s", type_str(n->symbol_type));
+            }
+            if (n->symbol != NULL && n->symbol->is_func)
+            {
+                TypeNode *param = n->symbol->params;
+                printf(" - (");
+                if (param != NULL)
+                {
+                    printf("%s", type_str(param->type));
+                    for (param = param->next; param != NULL; param = param->next)
+                    {
+                        printf(",%s", type_str(param->type));
+                    }
+                }
+                printf(")");
+            }
+
             printf("\n");
         }
         print_tree(n->children, level + 1, to_print);
