@@ -20,3 +20,8 @@ const char *type_str(sym_type type)
         return "no type";
     }
 }
+
+bool is_numeric(sym_type type)
+{
+    return type == float32_type || type == integer_type;
+}

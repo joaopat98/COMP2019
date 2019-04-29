@@ -77,7 +77,7 @@ typedef struct type_node
 typedef struct sym
 {
     sym_type type;
-    char name[100];
+    char name[500];
     bool is_func;
     bool was_used;
     Node *declaration;

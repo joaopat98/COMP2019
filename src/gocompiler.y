@@ -258,7 +258,7 @@ Statement: ID ASSIGN Expr {
     append_child($$, $2);
 }
 | RETURN {
-    $$ = new_empty_node(Return);
+    $$ = new_node(Return, $1);
 }
 | FuncInvocation {
     $$ = $1;

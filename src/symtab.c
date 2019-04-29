@@ -43,44 +43,6 @@ Symbol *add_sym(Scope *scope, Symbol *symbol)
     return NULL;
 }
 
-Symbol *add_func(Scope *scope, Symbol *func)
-{
-    if (scope->symbols == NULL)
-    {
-        scope->symbols = func;
-    }
-    else
-    {
-        Symbol *ptr = scope->symbols;
-        while (true)
-        {
-            if (!strcmp(ptr->name, func->name))
-            {
-                TypeNode *first = ptr->params;
-                TypeNode *second = func->params;
-                bool same = true;
-                while (first != NULL || second != NULL)
-                {
-                    if (first == NULL || second == NULL || first->type != second->type)
-                    {
-                        same = false;
-                        break;
-                    }
-                    first = first->next;
-                    second = second->next;
-                }
-                if (same)
-                    return ptr;
-            }
-            if (ptr->next == NULL)
-                break;
-            ptr = ptr->next;
-        }
-        ptr->next = func;
-    }
-    return NULL;
-}
-
 Symbol *add_param(Scope *scope, Symbol *symbol)
 {
     Symbol *sym = add_sym(scope, symbol);
@@ -141,36 +103,6 @@ Symbol *get_symbol(Scope *scope, char *name)
     return NULL;
 }
 
-Symbol *get_func(Scope *scope, char *name, Node *params)
-{
-    Symbol *ptr;
-    for (ptr = scope->symbols; ptr != NULL; ptr = ptr->next)
-    {
-        if (!strcmp(ptr->name, name))
-        {
-            TypeNode *first = ptr->params;
-            Node *second = params;
-            bool same = true;
-            while (first != NULL && second != NULL)
-            {
-                if (first == NULL || second == NULL || first->type != second->symbol_type)
-                {
-                    same = false;
-                    break;
-                }
-                if (same)
-                    return ptr;
-            }
-            if (same)
-            {
-                ptr->was_used = true;
-                return ptr;
-            }
-        }
-    }
-    return NULL;
-}
-
 sym_type get_node_type(Node *n)
 {
     switch (n->type)
@@ -203,7 +135,7 @@ void print_scope(Scope *scope)
             }
         }
         printf(") Symbol Table =====\n");
-        printf("return\t%s\n", type_str(scope->return_type));
+        printf("return\t\t%s\n", type_str(scope->return_type));
     }
     else
     {

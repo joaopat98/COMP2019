@@ -12,7 +12,9 @@
             "args": [
                 "-s",
                 "<",
-                "Comp2019/meta3/factorial.dgo"
+                "Comp2019/meta3/errors_parseargs.dgo",
+                ">",
+                "out.txt"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
