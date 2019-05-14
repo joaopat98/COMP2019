@@ -1,0 +1,5 @@
+funcoes ainda n declaradas estao a dar erro quando aparecem (undefined)
+
+erros dao runtime error - o programa nem da output, esta a crashar: possivelmente excesso de memoria ou algum ponteiro solto
+
+so verificar as invocacoes de funcoes apos construir todas as tabelas de simbolos
