@@ -8,7 +8,7 @@ void add_scope(Scope *root, Scope *scope)
     ptr->next = scope;
 }
 
-Scope *new_scope(char *name, bool is_func, sym_type return_type, Symbol *ref_sym)
+Scope *new_scope(char *name, bool is_func, sym_type return_type, Symbol *ref_sym, Node *body)
 {
     Scope *scope = (Scope *)malloc(sizeof(Scope));
     strcpy(scope->name, name);
@@ -18,6 +18,7 @@ Scope *new_scope(char *name, bool is_func, sym_type return_type, Symbol *ref_sym
     scope->symbols = NULL;
     scope->next = NULL;
     scope->ref_sym = ref_sym;
+    scope->body = body;
     return scope;
 }
 
@@ -97,6 +98,19 @@ Symbol *get_symbol(Scope *scope, char *name)
         if (!strcmp(ptr->name, name))
         {
             ptr->was_used = true;
+            return ptr;
+        }
+    }
+    return NULL;
+}
+
+Scope *get_scope(Scope *root, char *name)
+{
+    Scope *ptr;
+    for (ptr = root->next; ptr != NULL; ptr = ptr->next)
+    {
+        if (!strcmp(ptr->name, name))
+        {
             return ptr;
         }
     }

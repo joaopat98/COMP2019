@@ -6,22 +6,9 @@
 #include "stdio.h"
 #include "sym_types.h"
 
-typedef struct sc Scope;
-
-typedef struct sc
-{
-    char name[100];
-    bool is_func;
-    sym_type return_type;
-    int num_params;
-    Symbol *ref_sym;
-    Symbol *symbols;
-    Scope *next;
-} sc_t;
-
 void add_scope(Scope *root, Scope *scope);
 
-Scope *new_scope(char *name, bool is_func, sym_type return_type, Symbol *ref_sym);
+Scope *new_scope(char *name, bool is_func, sym_type return_type, Symbol *ref_sym, Node *body);
 
 Symbol *add_sym(Scope *scope, Symbol *symbol);
 

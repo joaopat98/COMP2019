@@ -54,6 +54,7 @@ typedef enum
 typedef struct node Node;
 typedef struct type_node TypeNode;
 typedef struct sym Symbol;
+typedef struct sc Scope;
 
 typedef struct node
 {
@@ -84,6 +85,18 @@ typedef struct sym
     TypeNode *params;
     Symbol *next;
 } sym_t;
+
+typedef struct sc
+{
+    char name[100];
+    bool is_func;
+    sym_type return_type;
+    int num_params;
+    Symbol *ref_sym;
+    Symbol *symbols;
+    Scope *next;
+    Node *body;
+} sc_t;
 
 Node *new_node(int type, tokeninfo token);
 

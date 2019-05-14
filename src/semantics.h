@@ -7,4 +7,8 @@
 
 bool parse_node(Node *n, Scope *local, Scope *global);
 
+bool parse_program(Scope *global);
+
+int parse_global(Node *n, Scope *global);
+
 #endif

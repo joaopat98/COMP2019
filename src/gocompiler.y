@@ -289,7 +289,7 @@ MultiStatement: Statement SEMICOLON MultiStatement {
     $$ = NULL;
 };
 ParseArgs: ID COMMA BLANKID ASSIGN PARSEINT LPAR CMDARGS LSQ Expr RSQ RPAR {
-    $$ = new_node(ParseArgs, $4);
+    $$ = new_node(ParseArgs, $5);
     append_child($$, new_node(Id, $1));
     append_child($$, $9);
 }
@@ -438,24 +438,43 @@ void  yyerror (const char *s) {
 int lex_init(int argc, char **argv);
 
 int main(int argc, char **argv) {
+    bool l = false,t = false,s = false;
+    for(int i = 0; i<argc;i++) {
+        l = strcmp(argv[i],"-l")==0 || l;
+    }
+    for(int i = 0; i<argc;i++) {
+        t = strcmp(argv[i],"-t")==0 || t;
+    }
+    for(int i = 0; i<argc;i++) {
+        s = strcmp(argv[i],"-s")==0 || s;
+    }
     lex_init(argc, argv);
-    if(argc >= 2 && strcmp(argv[1],"-l")==0) {
+    if(l) {
         yylex();
         return 0;
-    } else if(argc >= 2 && strcmp(argv[1],"-t")==0) {
+    } else if(t) {
         yyparse();
         print_tree(root_node,0,true);
-    } else if(argc >= 2 && strcmp(argv[1],"-s")==0) {
+    } else if(s) {
         yyparse();
-        global = new_scope("global", false, undef, NULL);
-        if(parse_node(root_node, global, global))
+        global = new_scope("global", false, undef, NULL, NULL);
+        bool errors = parse_global(root_node, global);
+        errors = parse_program(global) || errors;
+        if(errors){
             print_errors(root_node);
+        }
         else {
             print_scopes(global);
             print_tree(root_node,0,true);
         }
     } else {
         yyparse();
+        global = new_scope("global", false, undef, NULL, NULL);
+        bool errors = parse_global(root_node, global);
+        errors = parse_program(global) || errors;
+        if(errors){
+            print_errors(root_node);
+        }
         print_tree(root_node,0,false);
     }
     return 0;

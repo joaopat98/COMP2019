@@ -12,7 +12,7 @@
             "args": [
                 "-s",
                 "<",
-                "Comp2019/meta3/errors_parseargs.dgo",
+                "Comp2019/meta3/variable_func_assign_errors.dgo",
                 ">",
                 "out.txt"
             ],
