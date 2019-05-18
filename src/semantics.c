@@ -139,6 +139,7 @@ bool parse_expr(Node *n, Scope *local, Scope *global)
         {
             error = true;
             sprintf(n->error, "Cannot find symbol %s\n", n->val);
+            n->symbol_type = undef;
         }
         else
         {
