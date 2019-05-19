@@ -11,9 +11,9 @@
             "program": "${workspaceFolder}/.bin/main",
             "args": [
                 "<",
-                "Comp2019/meta3/factorial.dgo",
+                "Comp2019/meta3/valid_program.dgo",
                 ">",
-                "out.txt"
+                "out.ll"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
