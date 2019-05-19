@@ -7,6 +7,7 @@ const char *init = "@.int_format = private unnamed_addr constant [4 x i8] c\"%d\
                    "@.float_format = private unnamed_addr constant [7 x i8] c\"%.08f\\0A\\00\"\n"
                    "@.bool_true = private unnamed_addr constant [6 x i8] c\"true\\0A\\00\"\n"
                    "@.bool_false = private unnamed_addr constant [7 x i8] c\"false\\0A\\00\"\n"
+                   "@.null_str = external global i8\n"
                    "\n"
                    "declare i32 @printf(i8* , ...)\n"
                    "\n"
@@ -16,9 +17,9 @@ const char *init = "@.int_format = private unnamed_addr constant [4 x i8] c\"%d\
                    "    ret i32 0\n"
                    "}\n"
                    "\n"
-                   "define i32 @print_float(float %num) {\n"
+                   "define i32 @print_float(double %num) {\n"
                    "    %1 = getelementptr [7 x i8], [7 x i8]* @.float_format, i64 0, i64 0\n"
-                   "    call i32 (i8*, ...) @printf(i8* %1, float %num)\n"
+                   "    call i32 (i8*, ...) @printf(i8* %1, double %num)\n"
                    "    ret i32 0\n"
                    "}\n"
                    "\n"
@@ -53,7 +54,7 @@ const char *ll_type(sym_type type)
     case integer_type:
         return "i32";
     case float32_type:
-        return "float";
+        return "double";
     case bool_type:
         return "i1";
     case string_type:
@@ -79,10 +80,10 @@ int expr_code(Node *n, Scope *scope)
     switch (n->type)
     {
     case Or:
-        printf("and i1 %%.%d, %%.%d", first, second);
+        printf("and i1 %%.%d, %%.%d\n", first, second);
         break;
     case And:
-        printf("or i1 %%.%d, %%.%d", first, second);
+        printf("or i1 %%.%d, %%.%d\n", first, second);
         break;
     case Lt:
     case Gt:
@@ -90,49 +91,62 @@ int expr_code(Node *n, Scope *scope)
     case Ge:
     case Eq:
     case Ne:
-        if (n->symbol_type == float32_type)
+        if (n->children->symbol_type == float32_type)
         {
-            printf("fmcp ");
+            printf("fcmp ");
+            switch (n->type)
+            {
+            case Lt:
+                printf("olt ");
+                break;
+            case Gt:
+                printf("ogt ");
+                break;
+            case Le:
+                printf("ole ");
+                break;
+            case Ge:
+                printf("oge ");
+                break;
+            case Eq:
+                printf("oeq ");
+                break;
+            case Ne:
+                printf("one ");
+                break;
+            default:
+                break;
+            }
         }
         else
         {
             printf("icmp ");
+            switch (n->type)
+            {
+            case Lt:
+                printf("slt ");
+                break;
+            case Gt:
+                printf("sgt ");
+                break;
+            case Le:
+                printf("sle ");
+                break;
+            case Ge:
+                printf("sge ");
+                break;
+            case Eq:
+                printf("eq ");
+                break;
+            case Ne:
+                printf("ne ");
+                break;
+            default:
+                break;
+            }
         }
 
-        switch (n->type)
-        {
-        case Lt:
-            printf("slt ");
-            break;
-        case Gt:
-            printf("sgt ");
-            break;
-        case Le:
-            printf("sle ");
-            break;
-        case Ge:
-            printf("sge ");
-            break;
-        case Eq:
-            printf("eq ");
-            break;
-        case Ne:
-            printf("ne ");
-            break;
-        default:
-            break;
-        }
-
-        if (n->symbol_type == float32_type)
-        {
-            printf("float ");
-        }
-        else
-        {
-            printf("i32 ");
-        }
-
-        printf("%%.%d, %%.%d\n", first, second);
+        printf("%s %%.%d, %%.%d\n", ll_type(n->children->symbol_type), first, second);
 
         break;
     case Add:
@@ -170,16 +184,7 @@ int expr_code(Node *n, Scope *scope)
 
         break;
     case Mod:
-        if (n->symbol_type == float32_type)
-        {
-            printf("f");
-        }
-        else
-        {
-            printf("s");
-        }
-
-        printf("rem %s %%.%d, %%.%d\n", ll_type(n->symbol_type), first, second);
+        printf("srem i32 %%.%d, %%.%d\n", first, second);
         break;
     case Not:
         printf("icmp eq i1 0, %%.%d", first);
@@ -202,9 +207,18 @@ int expr_code(Node *n, Scope *scope)
         printf("%%.%d = add i32 0, %s\n", result_var, n->val);
         break;
     case RealLit:
+    {
+        char f_buf[1000];
+        f_buf[0] = 0;
+
         result_var = temp_counter++;
-        printf("%%.%d = fadd float 0, %s\n", result_var, n->val);
-        break;
+        if (n->val[0] == '.')
+            sprintf(f_buf, "0");
+        sprintf(f_buf + strlen(f_buf), "%s", n->val);
+
+        printf("%%.%d = fadd double %s, 0.0\n", result_var, f_buf);
+    }
+    break;
     case Id:
     {
         result_var = temp_counter++;
@@ -350,7 +364,7 @@ void stmt_code(Node *n, Scope *scope)
             printf("call i32 @print_int(i32 %%.%d)\n", expr_code(n->children, scope));
             break;
         case float32_type:
-            printf("call i32 @print_float(float %%.%d)\n", expr_code(n->children, scope));
+            printf("call i32 @print_float(double %%.%d)\n", expr_code(n->children, scope));
             break;
         case bool_type:
             printf("call i32 @print_bool(i1 %%.%d)\n", expr_code(n->children, scope));
@@ -424,7 +438,8 @@ void code_gen(Scope *global)
             {
                 Symbol *param = func->symbols;
                 printf("%s", ll_type(param->type));
-                for (param = param->next; param != NULL; param = param->next)
+                int i = 1;
+                for (param = param->next; i++ < func->num_params; param = param->next)
                 {
                     printf(", %s", ll_type(param->type));
                 }
@@ -445,7 +460,12 @@ void code_gen(Scope *global)
             stmt_code(n, func);
         }
 
-        printf("ret %s 0\n", ll_type(func->return_type));
+        if (func->return_type == float32_type)
+            printf("ret %s 0.0\n", ll_type(func->return_type));
+        else if (func->return_type == string_type)
+            printf("ret %s @.null_str\n", ll_type(func->return_type));
+        else
+            printf("ret %s 0\n", ll_type(func->return_type));
         printf("}\n");
     }
 }
