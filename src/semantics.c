@@ -4,6 +4,7 @@ bool parse_expr(Node *n, Scope *local, Scope *global)
 {
     bool error = false;
     bool suberror = false;
+    bool left_error = false, right_error = false;
     Node *first, *second;
     switch (n->type)
     {
@@ -12,7 +13,9 @@ bool parse_expr(Node *n, Scope *local, Scope *global)
         n->symbol_type = bool_type;
         first = n->children;
         second = n->children->next;
-        error = parse_expr(first, local, global) || parse_expr(second, local, global);
+        left_error = parse_expr(first, local, global)
+        right_error = parse_expr(second, local, global);
+        error = left_error || right_error;
         if (first->symbol_type != bool_type || second->symbol_type != bool_type)
         {
             error = true;
@@ -26,7 +29,9 @@ bool parse_expr(Node *n, Scope *local, Scope *global)
         n->symbol_type = bool_type;
         first = n->children;
         second = n->children->next;
-        error = parse_expr(first, local, global) || parse_expr(second, local, global);
+        left_error = parse_expr(first, local, global)
+        right_error = parse_expr(second, local, global);
+        error = left_error || right_error;
         if (!is_numeric(first->symbol_type) || !is_numeric(second->symbol_type))
         {
             error = true;
@@ -39,8 +44,10 @@ bool parse_expr(Node *n, Scope *local, Scope *global)
     case Div:
         first = n->children;
         second = n->children->next;
-        error = parse_expr(first, local, global) || parse_expr(second, local, global);
-        if (first->symbol_type == string_type || second->symbol_type == string_type)
+		left_error = parse_expr(first, local, global)
+        right_error = parse_expr(second, local, global);
+        error = left_error || right_error;
+        if (first->symbol_type == string_type && second->symbol_type == string_type)
         {
             n->symbol_type = integer_type;
             break;
@@ -60,13 +67,10 @@ bool parse_expr(Node *n, Scope *local, Scope *global)
     case Mod:
         first = n->children;
         second = n->children->next;
-        error = parse_expr(first, local, global) || parse_expr(second, local, global);
-        if (first->symbol_type == string_type || second->symbol_type == string_type)
-        {
-            n->symbol_type = integer_type;
-            break;
-        }
-        if (!is_numeric(first->symbol_type) || !is_numeric(second->symbol_type) || first->symbol_type != second->symbol_type)
+        left_error = parse_expr(first, local, global)
+        right_error = parse_expr(second, local, global);
+        error = left_error || right_error;
+        if (first->symbol_type != integer_type  || second->symbol_type != integer_type)
         {
             error = true;
             sprintf(n->error, "Operator %s cannot be applied to types %s, %s\n", n->val, type_str(first->symbol_type), type_str(second->symbol_type));
@@ -74,7 +78,7 @@ bool parse_expr(Node *n, Scope *local, Scope *global)
         }
         else
         {
-            n->symbol_type = first->symbol_type;
+            n->symbol_type = integer_type;
         }
         break;
     case Not:
@@ -91,7 +95,9 @@ bool parse_expr(Node *n, Scope *local, Scope *global)
         n->symbol_type = bool_type;
         first = n->children;
         second = n->children->next;
-        error = parse_expr(first, local, global) || parse_expr(second, local, global);
+        left_error = parse_expr(first, local, global)
+        right_error = parse_expr(second, local, global);
+        error = left_error || right_error;
         if (!(is_numeric(first->symbol_type) && is_numeric(second->symbol_type)) && first->symbol_type != second->symbol_type)
         {
             error = true;
@@ -189,7 +195,7 @@ bool parse_expr(Node *n, Scope *local, Scope *global)
             break;
         }
         else
-        {
+        {suberror
             n->children->symbol = func_sym;
             n->symbol_type = func_sym->type == none ? no_type : func_sym->type;
         }
