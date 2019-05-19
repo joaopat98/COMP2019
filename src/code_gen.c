@@ -274,6 +274,7 @@ void stmt_code(Node *n, Scope *scope)
         }
         else
         {
+            temp = n->children;
             int start_l = label_counter++;
             int end_l = label_counter++;
             printf("l_%d:", start_l);
@@ -391,8 +392,6 @@ void stmt_code(Node *n, Scope *scope)
 
 void code_gen(Scope *global)
 {
-    Node *temp;
-
     printf("%s", init);
 
     for (Symbol *ptr = global->symbols; ptr != NULL; ptr = ptr->next)
