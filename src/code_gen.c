@@ -222,7 +222,7 @@ int expr_code(Node *n, Scope *scope)
     case Id:
     {
         result_var = temp_counter++;
-        if (is_local(scope, n->val))
+        if (is_local(scope, n))
         {
             printf("%%.%d = load %s, %s* %%%s\n", result_var, ll_type(n->symbol_type), ll_type(n->symbol_type), n->val);
         }
@@ -259,7 +259,7 @@ void stmt_code(Node *n, Scope *scope)
     {
     case Assign:
         temp = n->children->next;
-        if (is_local(scope, n->children->val))
+        if (is_local(scope, n->children))
             printf("store %s %%.%d, %s* %%%s\n", ll_type(temp->symbol_type), expr_code(temp, scope), ll_type(temp->symbol_type), n->children->val);
         else
             printf("store %s %%.%d, %s* @%s\n", ll_type(temp->symbol_type), expr_code(temp, scope), ll_type(temp->symbol_type), n->children->val);

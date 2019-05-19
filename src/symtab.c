@@ -104,9 +104,10 @@ Symbol *get_symbol(Scope *scope, char *name)
     return NULL;
 }
 
-bool is_local(Scope *scope, char *name)
+bool is_local(Scope *scope, Node *n)
 {
-    return get_symbol(scope, name) ? true : false;
+    Symbol *s = get_symbol(scope, n->val);
+    return s != NULL && (s->declaration->line < n->line || (s->declaration->line == n->line && s->declaration->col < n->col));
 }
 
 Scope *get_scope(Scope *root, char *name)

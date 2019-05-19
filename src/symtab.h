@@ -22,7 +22,7 @@ void add_func_param(Symbol *symbol, sym_type param);
 
 Symbol *get_symbol(Scope *scope, char *name);
 
-bool is_local(Scope *scope, char *name);
+bool is_local(Scope *scope, Node *n);
 
 sym_type get_node_type(Node *n);
 
