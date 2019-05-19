@@ -195,7 +195,7 @@ bool parse_expr(Node *n, Scope *local, Scope *global)
             break;
         }
         else
-        {suberror
+        {
             n->children->symbol = func_sym;
             n->symbol_type = func_sym->type == none ? no_type : func_sym->type;
         }
@@ -307,11 +307,16 @@ bool parse_node(Node *n, Scope *local, Scope *global)
         error = parse_expr(n->children, local, global);
         break;
     case ParseArgs:
-        n->symbol_type = integer_type;
-        error = parse_expr(n->children, local, global) || parse_expr(n->children->next, local, global);
+    	error = parse_expr(n->children, local, global);
+        error = parse_expr(n->children->next, local, global) || error;
         if (n->children->symbol_type != integer_type || n->children->next->symbol_type != integer_type)
         {
             sprintf(n->error, "Operator strconv.Atoi cannot be applied to types %s, %s\n", type_str(n->children->symbol_type), type_str(n->children->next->symbol_type));
+            error = true;
+        }
+        if (error) 
+        {
+        	n->symbol_type = undef;
         }
         break;
     case Block:
