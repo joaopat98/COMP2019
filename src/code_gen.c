@@ -192,15 +192,22 @@ int expr_code(Node *n, Scope *scope)
     case Minus:
         if (n->symbol_type == float32_type)
         {
-            printf("f");
+            printf("fmul %s -1.0, %%.%d\n", ll_type(n->symbol_type), first);
         }
-        printf("mul %s -1, %%.%d\n", ll_type(n->symbol_type), first);
+        else
+        {
+            printf("smul %s -1, %%.%d\n", ll_type(n->symbol_type), first);
+        }
+        break;
     case Plus:
         if (n->symbol_type == float32_type)
         {
-            printf("f");
+            printf("fadd %s 0.0, %%.%d\n", ll_type(n->symbol_type), first);
         }
-        printf("add %s 0, %%.%d\n", ll_type(n->symbol_type), first);
+        else
+        {
+            printf("add %s 0, %%.%d\n", ll_type(n->symbol_type), first);
+        }
         break;
     case IntLit:
         result_var = temp_counter++;

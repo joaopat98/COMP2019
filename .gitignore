@@ -77,3 +77,7 @@ y\.tab\.h
 out\.txt
 
 src/y\.dot
+
+out\.ll
+
+out\.s
