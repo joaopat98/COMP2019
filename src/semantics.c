@@ -409,7 +409,7 @@ int parse_global(Node *n, Scope *global)
             sprintf(header->children->error, "Symbol %s already defined\n", header->children->val);
             error = true;
         }
-
+        
         break;
     default:
         break;

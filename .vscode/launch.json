@@ -10,9 +10,8 @@
             "request": "launch",
             "program": "${workspaceFolder}/.bin/main",
             "args": [
-                "-s",
                 "<",
-                "Comp2019/meta3/operators.dgo",
+                "Comp2019/meta3/factorial.dgo",
                 ">",
                 "out.txt"
             ],

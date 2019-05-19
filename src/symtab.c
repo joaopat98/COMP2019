@@ -104,6 +104,11 @@ Symbol *get_symbol(Scope *scope, char *name)
     return NULL;
 }
 
+bool is_local(Scope *scope, char *name)
+{
+    return get_symbol(scope, name) ? true : false;
+}
+
 Scope *get_scope(Scope *root, char *name)
 {
     Scope *ptr;

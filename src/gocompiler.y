@@ -7,6 +7,7 @@
     #include "token.h"
     #include "symtab.h"
     #include "semantics.h"
+    #include "code_gen.h"
 
     int yylex(void);
     void yyerror (const char *s);
@@ -474,6 +475,9 @@ int main(int argc, char **argv) {
         errors = parse_program(global) || errors;
         if(errors){
             print_errors(root_node);
+        }
+        else {
+            code_gen(global);
         }
         print_tree(root_node,0,false);
     }
