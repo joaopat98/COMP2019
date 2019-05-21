@@ -300,7 +300,7 @@ void stmt_code(Node *n, Scope *scope)
             int end_l = label_counter++;
             printf("l_%d:", start_l);
 
-            for (Node *ptr = temp->next->children; ptr != NULL; ptr = ptr->next)
+            for (Node *ptr = temp->children; ptr != NULL; ptr = ptr->next)
             {
                 stmt_code(ptr, scope);
             }

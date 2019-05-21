@@ -242,7 +242,7 @@ bool parse_node(Node *n, Scope *local, Scope *global)
         error = parse_expr(n->children->next, local, global);
         id_node = n->children;
         error = parse_expr(id_node, local, global) || error;
-        if (id_node->symbol_type == undef || id_node->symbol_type != n->children->next->symbol_type)
+        if (id_node->symbol_type == undef || id_node->symbol_type != id_node->next->symbol_type)
         {
             error = true;
             sprintf(n->error, "Operator %s cannot be applied to types %s, %s\n", n->val, type_str(id_node->symbol_type), type_str(n->children->next->symbol_type));
@@ -250,7 +250,7 @@ bool parse_node(Node *n, Scope *local, Scope *global)
         }
         else
         {
-            n->symbol_type = n->children->symbol_type;
+            n->symbol_type = id_node->symbol_type;
         }
 
         break;
@@ -273,7 +273,7 @@ bool parse_node(Node *n, Scope *local, Scope *global)
         }
         else
         {
-            for (Node *ptr = n->children->next->children; ptr != NULL; ptr = ptr->next)
+            for (Node *ptr = n->children; ptr != NULL; ptr = ptr->next)
             {
                 error = parse_node(ptr, local, global) || error;
             }

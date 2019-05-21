@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}/.bin/main",
             "args": [
                 "<",
-                "Comp2019/meta3/logical_operators.dgo",
+                "Comp2019/meta3/statements_expressions.dgo",
                 ">",
                 "out.ll"
             ],
