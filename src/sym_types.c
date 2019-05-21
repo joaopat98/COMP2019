@@ -17,7 +17,7 @@ const char *type_str(sym_type type)
     case undef:
         return "undef";
     default:
-        return "no type";
+        return "none";
     }
 }
 
