@@ -5,6 +5,7 @@ int label_counter;
 
 const char *init = "@.int_format = private unnamed_addr constant [4 x i8] c\"%d\\0A\\00\"\n"
                    "@.float_format = private unnamed_addr constant [7 x i8] c\"%.08f\\0A\\00\"\n"
+                   "@.str_format = private unnamed_addr constant [4 x i8] c\"%s\\0A\\00\"\n"
                    "@.bool_true = private unnamed_addr constant [6 x i8] c\"true\\0A\\00\"\n"
                    "@.bool_false = private unnamed_addr constant [7 x i8] c\"false\\0A\\00\"\n"
                    "@.null_str = external global i8\n"
@@ -80,10 +81,10 @@ int expr_code(Node *n, Scope *scope)
     switch (n->type)
     {
     case Or:
-        printf("and i1 %%.%d, %%.%d\n", first, second);
+        printf("or i1 %%.%d, %%.%d\n", first, second);
         break;
     case And:
-        printf("or i1 %%.%d, %%.%d\n", first, second);
+        printf("and i1 %%.%d, %%.%d\n", first, second);
         break;
     case Lt:
     case Gt:
@@ -152,14 +153,9 @@ int expr_code(Node *n, Scope *scope)
     case Add:
     case Sub:
     case Mul:
-    case Div:
         if (n->symbol_type == float32_type)
         {
             printf("f");
-        }
-        else if (n->type == Div)
-        {
-            printf("s");
         }
 
         switch (n->type)
@@ -173,21 +169,30 @@ int expr_code(Node *n, Scope *scope)
         case Mul:
             printf("mul ");
             break;
-        case Div:
-            printf("div ");
-            break;
         default:
             break;
         }
 
         printf("%s %%.%d, %%.%d\n", ll_type(n->symbol_type), first, second);
+        break;
+    case Div:
+        if (n->symbol_type == float32_type)
+        {
+            printf("f");
+        }
+        else
+        {
+            printf("s");
+        }
+
+        printf("div %s %%.%d, %%.%d\n", ll_type(n->symbol_type), first, second);
 
         break;
     case Mod:
         printf("srem i32 %%.%d, %%.%d\n", first, second);
         break;
     case Not:
-        printf("icmp eq i1 0, %%.%d", first);
+        printf("icmp eq i1 false, %%.%d", first);
         break;
     case Minus:
         if (n->symbol_type == float32_type)
@@ -196,7 +201,7 @@ int expr_code(Node *n, Scope *scope)
         }
         else
         {
-            printf("smul %s -1, %%.%d\n", ll_type(n->symbol_type), first);
+            printf("mul %s -1, %%.%d\n", ll_type(n->symbol_type), first);
         }
         break;
     case Plus:
@@ -257,6 +262,51 @@ int expr_code(Node *n, Scope *scope)
         break;
     }
     return result_var;
+}
+
+int format_str(Node *n)
+{
+    char *buf = (char *)malloc(1000 * sizeof(char));
+    buf[0] = 0;
+    int len = 0;
+    for (int i = 0; i < strlen(n->val); i++)
+    {
+        if (n->val[i] == '\\')
+        {
+            switch (n->val[i + 1])
+            {
+            case 'f':
+                sprintf(buf + strlen(buf), "\\0C");
+                break;
+            case 'n':
+                sprintf(buf + strlen(buf), "\\0A");
+                break;
+            case 'r':
+                sprintf(buf + strlen(buf), "\\0D");
+                break;
+            case 't':
+                sprintf(buf + strlen(buf), "\\09");
+                break;
+            case '\\':
+                sprintf(buf + strlen(buf), "\\5C");
+                break;
+            case '\"':
+                sprintf(buf + strlen(buf), "\\22");
+                break;
+            default:
+                break;
+            }
+            i++;
+        }
+        else
+        {
+            sprintf(buf + strlen(buf), "%c", n->val[i]);
+        }
+        len++;
+    }
+    free(n->val);
+    n->val = buf;
+    return len;
 }
 
 void stmt_code(Node *n, Scope *scope)
@@ -376,11 +426,19 @@ void stmt_code(Node *n, Scope *scope)
         case bool_type:
             printf("call i32 @print_bool(i1 %%.%d)\n", expr_code(n->children, scope));
             break;
-        case string_type:
-            printf("call i32 @print_string(i8* %%.%d)\n", expr_code(n->children, scope));
-            break;
         default:
             break;
+        }
+        if (n->children->type == StrLit)
+        {
+            Node *str_node = n->children;
+            int alloc_ptr = temp_counter++;
+            int len = format_str(str_node) + 1;
+            int format_ptr = temp_counter++;
+            printf("%%.%d = alloca [%d x i8]\n", alloc_ptr, len);
+            printf("store [%d x i8] c\"%s\\00\", [%d x i8]* %%.%d\n", len, str_node->val, len, alloc_ptr);
+            printf("%%.%d = getelementptr [4 x i8], [4 x i8]* @.str_format, i64 0, i64 0\n", format_ptr);
+            printf("call i32 (i8*, ...) @printf(i8* %%.%d, [%d x i8]* %%.%d)\n", format_ptr, len, alloc_ptr);
         }
         break;
     case ParseArgs:
