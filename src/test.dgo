@@ -1,6 +1,14 @@
 package main;
 
+func recur (i int) bool {
+    if i == 0 {
+        return 0 == 0
+    }
+    return !recur(i - 1)
+}
+
 func main() int{
-	fmt.Println(os.Args[0])
+
+	fmt.Println(0 != 0)
     return 0;
 }

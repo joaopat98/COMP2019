@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}/.bin/main",
             "args": [
                 "<",
-                "Comp2019/meta4/simple_if.dgo",
+                "src/test.dgo",
                 ">",
                 "out.ll"
             ],

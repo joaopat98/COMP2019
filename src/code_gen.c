@@ -24,13 +24,8 @@ const char *init = "@.int_format = private unnamed_addr constant [4 x i8] c\"%d\
                    "    ret i32 0\n"
                    "}\n"
                    "\n"
-                   "define i32 @print_string(i8* %str) {\n"
-                   "    call i32 (i8*, ...) @printf(i8* %str)\n"
-                   "    ret i32 0\n"
-                   "}\n"
-                   "\n"
                    "define i32 @print_bool(i1 %num) {\n"
-                   "    br i1 %num, label %true, label %end\n"
+                   "    br i1 %num, label %true, label %false\n"
                    "\n"
                    "    true:\n"
                    "    %1 = getelementptr [6 x i8], [6 x i8]* @.bool_true, i64 0, i64 0\n"
@@ -250,7 +245,6 @@ int expr_code(Node *n, Scope *scope)
                     break;
                 }
             }
-
             if (is_int)
             {
                 sprintf(f_buf, "%s.0e%s", base, exp);
