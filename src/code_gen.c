@@ -333,7 +333,7 @@ void stmt_code(Node *n, Scope *scope)
             printf("br label %%l_%d\n\n", cond_l);
             printf("l_%d:\n", cond_l);
             printf("br i1 %%.%d, label %%l_%d, label %%l_%d\n\n", expr_code(temp, scope), start_l, end_l);
-            printf("l_%d:", start_l);
+            printf("l_%d:\n", start_l);
 
             for (Node *ptr = temp->next->children; ptr != NULL; ptr = ptr->next)
             {
@@ -341,14 +341,14 @@ void stmt_code(Node *n, Scope *scope)
             }
 
             printf("br label %%l_%d\n\n", cond_l);
-            printf("l_%d:", end_l);
+            printf("l_%d:\n", end_l);
         }
         else
         {
             temp = n->children;
             int start_l = label_counter++;
             int end_l = label_counter++;
-            printf("l_%d:", start_l);
+            printf("l_%d:\n", start_l);
 
             for (Node *ptr = temp->children; ptr != NULL; ptr = ptr->next)
             {
@@ -356,7 +356,7 @@ void stmt_code(Node *n, Scope *scope)
             }
 
             printf("br label %%l_%d\n\n", start_l);
-            printf("l_%d:", end_l);
+            printf("l_%d:\n", end_l);
         }
         break;
     case If:

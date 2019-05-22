@@ -1,5 +1,9 @@
-package main;
+package main
+
+	
 
 func main() {
-    fmt.Println("oof\roof");
+    for {
+        fmt.Println("loop")
+    }
 }
