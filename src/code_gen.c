@@ -192,7 +192,7 @@ int expr_code(Node *n, Scope *scope)
         printf("srem i32 %%.%d, %%.%d\n", first, second);
         break;
     case Not:
-        printf("icmp eq i1 false, %%.%d", first);
+        printf("icmp eq i1 false, %%.%d\n", first);
         break;
     case Minus:
         if (n->symbol_type == float32_type)
@@ -227,6 +227,36 @@ int expr_code(Node *n, Scope *scope)
         if (n->val[0] == '.')
             sprintf(f_buf, "0");
         sprintf(f_buf + strlen(f_buf), "%s", n->val);
+        bool has_exp = false;
+        for (int i = 0; i < strlen(f_buf); i++)
+        {
+            if (f_buf[i] == 'e' || f_buf[i] == 'E')
+            {
+                has_exp = true;
+                break;
+            }
+        }
+        if (has_exp)
+        {
+            char *tmp_buf = strdup(f_buf);
+            char *base = strtok(tmp_buf, "eE");
+            char *exp = strtok(NULL, "eE");
+            bool is_int = true;
+            for (int i = 0; i < strlen(base); i++)
+            {
+                if (base[i] == '.')
+                {
+                    is_int = false;
+                    break;
+                }
+            }
+
+            if (is_int)
+            {
+                sprintf(f_buf, "%s.0e%s", base, exp);
+            }
+            free(tmp_buf);
+        }
 
         printf("%%.%d = fadd double %s, 0.0\n", result_var, f_buf);
     }
@@ -450,7 +480,7 @@ void stmt_code(Node *n, Scope *scope)
         int result_var = temp_counter++;
         printf("%%.%d = load i8**, i8*** %%osargs\n", arr_ptr);
         printf("%%.%d = getelementptr i8*, i8** %%.%d, i32 %%.%d\n", str_ptr, arr_ptr, index_var);
-        printf("%%.%d = load i8*, i8** %%.%d", str, str_ptr);
+        printf("%%.%d = load i8*, i8** %%.%d\n", str, str_ptr);
         printf("%%.%d = call i32 @atoi(i8* %%.%d)\n", result_var, str);
         printf("store i32 %%.%d, i32* %%%s\n", result_var, n->children->val);
     }
@@ -477,7 +507,25 @@ void code_gen(Scope *global)
     {
         if (!ptr->is_func)
         {
-            printf("@%s = external global %s\n", ptr->name, ll_type(ptr->type));
+            printf("@%s = global %s ", ptr->name, ll_type(ptr->type));
+            switch (ptr->type)
+            {
+            case integer_type:
+                printf("0\n");
+                break;
+            case bool_type:
+                printf("0\n");
+                break;
+            case string_type:
+                printf("null\n");
+                break;
+            case float32_type:
+                printf("0.0\n");
+                break;
+
+            default:
+                break;
+            }
         }
     }
     for (Scope *func = global->next; func != NULL; func = func->next)
