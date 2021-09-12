@@ -26,22 +26,6 @@ func main() {
 Este programa declara uma variável argument do tipo int e atribui-lhe o valor inteiro do argumento passado ao programa, usando a função Atoi para realizar a conversão (esta função retorna um par de valores e o segundo valor é descartado). De seguida, calcula o fatorial desse valor e invoca a função Println para escrever o resultado na consola.
 
 
-## 1 Metas e avaliação
-
-O projeto está estruturado em quatro metas encadeadas, nas quais o resultado de cada meta é o ponto de partida para a meta seguinte. As datas e as ponderações são as seguintes:
-
-1. Análise lexical (19%) – 4 de março de 2019
-2. Análise sintática (25%) – 29 de março de 2019 (meta de avaliação)
-3. Análise semântica (25%) – 29 de abril de 2019
-4. Geração de código (25%) – 24 de maio de 2019 (meta de avaliação)
-
-A entrega final será acompanhada de um relatório que tem um peso de 6% na avaliação. Para além disso, a entrega final do trabalho deverá ser feita através do Inforestudante, até ao dia seguinte ao da Meta 4, e incluir todo o código-fonte produzido no âmbito do projeto (exatamente os mesmos arquivos .zip que tiverem sido colocados no MOOSHAK em cada meta).
-O trabalho será verificado no MOOSHAK, em cada uma das metas, usando um concurso criado para o efeito. A classificação final da Meta 1 é obtida em conjunto com a Meta 2 e a classificação final da Meta 3 é obtida em conjunto com a Meta 4. O nome do grupo a registar no MOOSHAK deverá ser obrigatoriamente da forma “uc2019123456_uc2019654321” usando os números de estudante como identificação do grupo na página [http://mooshak2.dei.uc.pt/~comp2019](http://mooshak2.dei.uc.pt/~comp2019) na qual o MOOSHAKestá acessível.
-
-### 1.1 Defesa e grupos
-
-O trabalho será realizado por grupos de dois alunos inscritos em turmas práticas do mesmodocente. Em casos excecionais, a confirmar com o docente, admite-se trabalhos individuais. A defesa oral do trabalho será realizada em grupo entre os dias 27 de maio e 7 de junho de 2019. A nota final do projeto diz respeito à prestação individual na defesa e está limitada pela soma ponderada das pontuações obtidas no MOOSHAK em cada uma das metas. Assim, a classificação final nunca poderá exceder a pontuação obtida no MOOSHAK acrescida da classificação do relatório final. Os programas de teste colocados por cada estudante no repositório https://git.dei.uc.pt/rbarbosa/Comp2019/tree/master serão contabilizados na avaliação. Aplica-se mínimos de 40% à nota final após a defesa.
-
 ## 2 Meta 1 – Analisador lexical
 
 Nesta primeira meta deve ser programado um analisador lexical para a linguagemdeiGo. A programação deve ser feita em linguagem C utilizando a ferramenta _lex_. Os “tokens” a ser considerados pelo compilador são apresentados de seguida e deverão estar de acordo com a especificação da linguagem Go, disponível em https://golang.org/ref/spec#Lexical_elements e no material de apoio da disciplina.
@@ -139,10 +123,4 @@ Line <num linha>, column <num coluna>: unterminated string literal\n
 Line <num linha>, column <num coluna>: invalid escape sequence (<c>)\n
 ```
 onde \<num linha> e \<num coluna> devem ser substituídos pelos valores correspondentes ao _início_ do token que originou o erro e \<c> devem ser substituídos por esse token. O analisador deve recuperar da ocorrência de erros lexicais a partir do _fim_ desse token. Tanto as linhas como as colunas são numeradas a partir de 1.
-
-### 2.4 Entrega da Meta 1
-
-O ficheiro _lex_ a entregar deverá obrigatoriamente listar os autores num comentário colocado no topo desse ficheiro, contendo o nome e o número de estudante de cada elemento do grupo. Esse ficheiro deverá chamar-se gocompiler.l e ser enviado num arquivo de nome gocompiler.zip, que não deverá ter quaisquer diretorias.
-O trabalho deverá ser verificado no MOOSHAK, usando o concurso criado especificamente para o efeito e cuja página está acima indicada na Secção 1. Será tida em conta apenas a última submissão ao problema A desse concurso. Os restantes problemas destinam-se a ajudar na validação do analisador. No entanto, o MOOSHAK não deve ser utilizado como ferramenta de depuração. Os estudantes deverão usar e contribuir para o repositório que está disponível em https://git.dei.uc.pt/rbarbosa/Comp2019/tree/master contendo casos de teste.
-
 
