@@ -101,8 +101,6 @@ INT
 LBRACE
 ...
 ```
-Figura 1: Exemplo de output do analisador lexical. O output completo está disponível em: https://git.dei.uc.pt/rbarbosa/Comp2019/blob/master/meta1/factorial.out
-
 O analisador deve aceitar (e ignorar) como separador de tokens o espaço em branco (espaços, tabs e mudanças de linha), bem como comentários dos tipos // ... e /* ... */. Deve ainda detetar a existência de quaisquer erros lexicais no ficheiro de entrada. Sempre que um token possa admitir mais do que um valor semântico, o valor encontrado deve ser impresso entre parêntesis logo a seguir ao nome do token, como exemplificado na figura acima para ID.
 Em deiGo, o “;” é utilizado como terminador em muitas situações. No entanto, a linguagem permite que grande parte destes “;” sejam omitidos. Para isso, quando o programa está a ser analisado lexicalmente é emitido, de forma automática, um token SEMICOLON sempre que o último token de uma linha seja:
 
